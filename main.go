@@ -1,113 +1,248 @@
 package main
 
 import (
-	"context"
+	"bytes"
+	"errors"
+	"flag"
 	"fmt"
-	"github.com/ariden/auto-add-golang-comments/cmd"
+	"io"
+	"io/fs"
 	"os"
-	"os/signal"
-	"syscall"
-	"time"
+	"os/exec"
+	"path/filepath"
+	"runtime"
+	"strings"
 )
 
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		<-sigCh
-		cancel()
-	}()
-
-	go myLongRunningProcess(ctx)
-	cmd.Execute()
-
-	<-ctx.Done()
-
-	fmt.Println("Processus terminé ou interrompu.")
-}
-
-// myLongRunningProcess is a private method that take a ctx of type context.Context.
-func myLongRunningProcess(ctx context.Context) {
-	for {
-		select {
-		case <-ctx.Done():
-
-			fmt.Println("Processus annulé.")
-			return
-		default:
-			time.Sleep(1 * time.Second)
-		}
+	if err := run(); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(2)
 	}
 }
 
-// toto is a type alias for the int type.
-// It allows you to create a new type with the same
-// underlying type as int, but with a different name.
-// This can be useful for improving code readability
-// and providing more semantic meaning to your types.
-type toto int
+type appArgs struct {
+	local    string
+	prefixes []string
 
-// tata is a type alias for the toto type.
-// It allows you to create a new type with the same
-// underlying type as int, but with a different name.
-// This can be useful for improving code readability
-// and providing more semantic meaning to your types.
-type tata toto
+	listOnly bool
+	write    bool
+	diffOnly bool
+}
 
-var (
-	// Var1 is a variable of type int which provides .
-	Var1	int
+func run() error {
+	var args appArgs
 
-	// Var2 is a variable of type string which provides .
-	Var2	string
+	flag.Usage = func() {
+		_, _ = fmt.Fprintln(flag.CommandLine.Output(), "Usage: gocomments [flags] [path ...]")
+		flag.PrintDefaults()
+		os.Exit(2)
+	}
 
-	// Var3 is a variable of type toto which provides .
-	Var3	toto
+	flag.StringVar(&args.local, "local", "", "put imports beginning with this string after 3rd-party package")
+	flag.Var((*ArrayStringFlag)(&args.prefixes), "prefix", "relative local prefix to from a new import group (can be given several times)")
+
+	flag.BoolVar(&args.listOnly, "l", false, "list files whose formatting differs from goimport's")
+	flag.BoolVar(&args.write, "w", false, "write result to (source) file instead of stdout")
+	flag.BoolVar(&args.diffOnly, "d", false, "display diffs instead of rewriting files")
+
+	flag.Parse()
+
+	return process(&args, flag.Args()...)
+}
+
+type fileSource uint8
+
+const (
+	fileSourceStdin fileSource = iota
+	fileSourceFilepath
 )
 
-// Var4 is a variable of type string which provides .
-var Var4 string
+func process(args *appArgs, paths ...string) error {
+	cache := NewCommentConfigCache(args.local, args.prefixes)
 
-// var5 is a private variable of type string which provides .
-var var5 string
+	if len(paths) == 0 {
+		return processFile(cache, "<standard input>", fileSourceStdin, os.Stdin, os.Stdout, args)
+	}
 
-// var6 is a private constant which provides .
-const var6 = "tata"
+	for _, path := range paths {
+		switch dir, err := os.Stat(path); {
+		case err != nil:
+			return err
+		case dir.IsDir():
+			return filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+				return visitFile(cache, args, path, d, err)
+			})
+		default:
+			if err := processFile(cache, path, fileSourceFilepath, nil, os.Stdout, args); err != nil {
+				return err
+			}
+		}
+	}
 
-// Var7 is a constant which provides .
-const Var7 = "toto"
-
-// Test represents a structure for 
-// It contains information about a Key, a KeyB, a KeyC, a private keyg and
-// optionally a KeyD, a KeyE.
-type Test struct {
-	Key	string
-	KeyB	int
-	KeyC	toto
-	KeyD	*toto
-	KeyE	*int
-	keyg	bool
+	return nil
 }
 
-// Tota is a method that belongs to the Test struct.
-// It does not take any arguments.
-func (t Test) Tota()	{}
+func processFile(cache *CommentConfigCache, filename string, source fileSource, in io.Reader, out io.Writer, args *appArgs) error {
+	if in == nil {
+		f, err := os.Open(filename)
+		if err != nil {
+			return err
+		}
 
-// Totbczzsd is a method .
-// It does not take any arguments.
-func Totbczzsd()	{}
+		defer func() {
+			_ = f.Close()
+		}()
 
-// Totc is a method that belongs to the Test struct that take a ctx of type context.Context, a value of type string
-// and returns a string and an error.
-func (t Test) Totc(ctx context.Context, value string) (string, error) {
-	return "test", nil
+		in = f
+	}
+
+	src, err := io.ReadAll(in)
+	if err != nil {
+		return err
+	}
+
+	res, err := processComments(filename, src, cache)
+	if err != nil {
+		return err
+	}
+
+	if !bytes.Equal(src, res) {
+		if args.listOnly {
+			_, _ = fmt.Fprintln(out, filename)
+		}
+		if args.write {
+			if source == fileSourceStdin {
+				return errors.New("can't use -w on stdin")
+			}
+			return os.WriteFile(filename, res, 0o644)
+		}
+
+		if args.diffOnly {
+			if source == fileSourceStdin {
+				filename = "stdin.go" // because <standard input>.orig looks silly
+			}
+
+			data, err := diff(src, res, filename)
+			if err != nil {
+				return fmt.Errorf("computing diff: %v", err)
+			}
+
+			_, _ = out.Write(data)
+		}
+	}
+
+	if !args.listOnly && !args.write && !args.diffOnly {
+		if _, err := out.Write(res); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-// Totd is a method that take a ctx of type context.Context, a value of type string
-// and returns a string and an error.
-func Totd(ctx context.Context, value string) (string, error) {
-	return "test", nil
+func visitFile(cache *CommentConfigCache, args *appArgs, path string, d fs.DirEntry, err error) error {
+	if err != nil {
+		return err
+	}
+
+	name := d.Name()
+
+	if d.IsDir() {
+		if name == "vendor" {
+			return fs.SkipDir
+		}
+
+		return nil
+	}
+
+	if strings.HasPrefix(name, ".") || !strings.HasSuffix(name, ".go") {
+		return nil
+	}
+
+	return processFile(cache, path, fileSourceFilepath, nil, os.Stdout, args)
+}
+
+func diff(b1, b2 []byte, filename string) ([]byte, error) {
+	f1, err := writeTempFile("", "gocomments", b1)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		_ = os.Remove(f1)
+	}()
+
+	f2, err := writeTempFile("", "gocomments", b2)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		_ = os.Remove(f2)
+	}()
+
+	data, err := exec.Command("diff", "-u", f1, f2).CombinedOutput()
+	if len(data) >= 0 {
+		data, err = replaceTempFilename(data, filename)
+	}
+	return data, err
+}
+
+func writeTempFile(dir string, prefix string, data []byte) (string, error) {
+	f, err := os.CreateTemp(dir, prefix)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = f.Write(data)
+	if err1 := f.Close(); err == nil {
+		err = err1
+	}
+
+	if err != nil {
+		_ = os.Remove(f.Name())
+		return "", err
+	}
+
+	return f.Name(), nil
+}
+
+// replaceTempFilename replaces temporary filenames in diff with actual one.
+//
+// --- /tmp/gofmt316145376	2017-02-03 19:13:00.280468375 -0500
+// +++ /tmp/gofmt617882815	2017-02-03 19:13:00.280468375 -0500
+// ...
+// ->
+// diff -u path/to/file.go.orig path/to/file.go
+// --- path/to/file.go.orig	2017-02-03 19:13:00.280468375 -0500
+// +++ path/to/file.go	2017-02-03 19:13:00.280468375 -0500
+// ...
+func replaceTempFilename(diff []byte, filename string) ([]byte, error) {
+	bs := bytes.SplitN(diff, []byte{'\n'}, 3)
+	if len(bs) < 3 {
+		return nil, fmt.Errorf("got unexpected diff for %s", filename)
+	}
+
+	// Preserve timestamps.
+	var t0, t1 []byte
+	if i := bytes.LastIndexByte(bs[0], '\t'); i != -1 {
+		t0 = bs[0][i:]
+	}
+	if i := bytes.LastIndexByte(bs[1], '\t'); i != -1 {
+		t1 = bs[1][i:]
+	}
+
+	// Always print filepath with slash separator.
+	f := filepath.ToSlash(filename)
+	bs[0] = []byte(fmt.Sprintf("--- %s%s", f+".orig", t0))
+	bs[1] = []byte(fmt.Sprintf("+++ %s%s", f, t1))
+
+	// Insert diff header.
+	header := fmt.Sprintf("diff -u %s %s", f+".orig", f)
+	bs = append([][]byte{[]byte(header)}, bs...)
+
+	return bytes.Join(bs, []byte{'\n'}), nil
 }
