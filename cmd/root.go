@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"github.com/ariden/auto-add-golang-comments/pkg"
 	"github.com/spf13/cobra"
-	"go-auto-commenter/pkg"
 	"log"
 	"os"
 )

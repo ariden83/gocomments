@@ -134,105 +134,249 @@ func (file *file) autoComment() {
 	if strings.HasSuffix(file.filename, "_test.go") {
 		return
 	}
-
 	var comments []*ast.CommentGroup
 
-	ast.Inspect(file.f, func(node ast.Node) bool {
-		if node == nil {
-			return false
-		}
+	// Parcourir les déclarations dans le fichier analysé.
+	for _, decl := range file.f.Decls {
+		// Vérifier si la déclaration est une déclaration générale (vari_uèÈXXables, constantes ou types).
+		if genDecl, ok := decl.(*ast.GenDecl); ok {
+			// Vérifier le type de déclaration (const, var, type).
+			switch genDecl.Tok {
+			case token.TYPE:
+				for _, spec := range genDecl.Specs {
 
-		c, ok := node.(*ast.CommentGroup)
-		if ok {
-			comments = append(comments, c)
-		}
+					typeSpec := spec.(*ast.TypeSpec)
 
-		switch fn := node.(type) {
-		case *ast.ValueSpec:
-			for _, name := range fn.Names {
-				if name.IsExported() && fn.Doc.Text() == "" {
-					if decl, ok := name.Obj.Decl.(*ast.ValueSpec); ok {
-						txt := fmt.Sprintf("// %s is a variable of type %s which provides .", name.Name, fmt.Sprintf("%s", decl.Type))
+					if typeSpec.Doc.Text() == "" {
+						privateValue := ""
+						if !typeSpec.Name.IsExported() {
+							privateValue = "private "
+						}
 
-						fn.Doc = &ast.CommentGroup{
-							List: []*ast.Comment{{
-								Text:  txt,
-								Slash: fn.Pos() - 1,
-							}},
+						switch structType := typeSpec.Type.(type) {
+						case *ast.StructType:
+							txt := fmt.Sprintf("// %s represents a %sstructure for ", typeSpec.Name, privateValue)
+
+							mandatoryFields := []*ast.Ident{}
+							optionFields := []*ast.Ident{}
+
+							// It contains information about the type of drop-off and
+							// optionally, details about the sender's mailbox picking.
+							for _, field := range structType.Fields.List {
+								for _, f := range field.Names {
+									if _, isPointer := field.Type.(*ast.StarExpr); isPointer {
+										optionFields = append(optionFields, f)
+									} else {
+										mandatoryFields = append(mandatoryFields, f)
+									}
+								}
+							}
+
+							if len(mandatoryFields) > 0 {
+								txt += "\n// It contains information about "
+								for i, f := range mandatoryFields {
+									if i > 0 {
+										txt += ", "
+									}
+									privateKey := "private "
+									if f.IsExported() {
+										privateKey = ""
+									}
+									txt += fmt.Sprintf("%s %s%s", IndefiniteArticle(fmt.Sprintf("%s", f.Name)), privateKey, f.Name)
+								}
+							}
+
+							if len(optionFields) > 0 {
+								if len(mandatoryFields) > 0 {
+									txt += " and\n// optionally "
+								} else {
+									txt += "\n// It contains optional information about "
+								}
+
+								for i, f := range optionFields {
+									if i > 0 {
+										txt += ", "
+									}
+									privateKey := "private "
+									if f.IsExported() {
+										privateKey = ""
+									}
+									txt += fmt.Sprintf("%s %s%s", IndefiniteArticle(fmt.Sprintf("%s", f.Name)), privateKey, f.Name)
+								}
+							}
+
+							txt += ".\n"
+
+							genDecl.Doc = &ast.CommentGroup{
+								List: []*ast.Comment{{
+									Text:  txt,
+									Slash: typeSpec.Pos() - token.Pos(len("type ")+1),
+								}},
+							}
+
+						default:
+							txt := fmt.Sprintf("// %s is a type alias for the %s type.\n// It allows you to create a new type with the same\n// underlying type as int, but with a different name.\n// This can be useful for improving code readability\n// and providing more semantic meaning to your types.\n", typeSpec.Name, structType)
+
+							genDecl.Doc = &ast.CommentGroup{
+								List: []*ast.Comment{{
+									Text:  txt,
+									Slash: genDecl.Pos() - 1,
+								}},
+							}
+
+							if typeSpec.TypeParams != nil {
+								log.Printf("typeparams list %+v", typeSpec.TypeParams.List)
+							}
+						}
+					}
+				}
+			case token.CONST:
+				// Parcourir les spécifications de déclaration pour obtenir les détails des constantes.
+				for _, spec := range genDecl.Specs {
+					varSpec := spec.(*ast.ValueSpec)
+					// Afficher le nom et le type de la variable
+
+					hasParenthesis := false
+					if genDecl.Lparen > 0 {
+						hasParenthesis = true
+					}
+
+					for _, name := range varSpec.Names {
+						if varSpec.Doc.Text() == "" {
+							exported := ""
+							if !name.IsExported() {
+								exported = "private "
+							}
+							if decl, ok := name.Obj.Decl.(*ast.ValueSpec); ok {
+								txt := fmt.Sprintf("// %s is a %sconstant which provides .", name.Name, exported)
+
+								if hasParenthesis {
+									decl.Doc = &ast.CommentGroup{
+										List: []*ast.Comment{{
+											Text:  txt,
+											Slash: decl.Pos() - 1,
+										}},
+									}
+								} else {
+									genDecl.Doc = &ast.CommentGroup{
+										List: []*ast.Comment{{
+											Text:  txt,
+											Slash: genDecl.Pos() - 1,
+										}},
+									}
+								}
+							}
+						}
+					}
+				}
+			case token.VAR:
+				// Parcourir les spécifications de déclaration pour obtenir les détails des variables.
+				for _, spec := range genDecl.Specs {
+					varSpec := spec.(*ast.ValueSpec)
+
+					// Afficher le nom et le type de la variable
+					hasParenthesis := false
+					if genDecl.Lparen > 0 {
+						hasParenthesis = true
+					}
+
+					for _, name := range varSpec.Names {
+						if varSpec.Doc.Text() == "" {
+							exported := ""
+							if !name.IsExported() {
+								exported = "private "
+							}
+
+							if decl, ok := name.Obj.Decl.(*ast.ValueSpec); ok {
+								txt := fmt.Sprintf("// %s is a %svariable of type %s which provides .", name.Name, exported, fmt.Sprintf("%s", decl.Type))
+
+								if hasParenthesis {
+									decl.Doc = &ast.CommentGroup{
+										List: []*ast.Comment{{
+											Text:  txt,
+											Slash: decl.Pos() - 1,
+										}},
+									}
+
+								} else {
+									genDecl.Doc = &ast.CommentGroup{
+										List: []*ast.Comment{{
+											Text:  txt,
+											Slash: genDecl.Pos() - 1,
+										}},
+									}
+								}
+							}
 						}
 					}
 				}
 			}
-		case *ast.StructType:
-			log.Printf("// Structure: %+v\n", fn.Incomplete)
-			log.Printf("// Structure: %+v\n", fn.Struct)
+		}
 
-			for _, field := range fn.Fields.List {
-
-				txt := "// test"
-				for _, name := range field.Names {
-					txt += fmt.Sprintf("// - %s\n", name.Name)
-				}
-
-				field.Doc = &ast.CommentGroup{
+		if genDecl, ok := decl.(*ast.FuncDecl); ok {
+			if genDecl.Doc.Text() == "" && genDecl.Name.Name != "main" {
+				genDecl.Doc = &ast.CommentGroup{
 					List: []*ast.Comment{{
-						Text:  txt,
-						Slash: fn.Pos() - 1,
-					}},
-				}
-			}
-
-		case *ast.FuncDecl:
-			if fn.Name.IsExported() && fn.Doc.Text() == "" {
-				fn.Doc = &ast.CommentGroup{
-					List: []*ast.Comment{{
-						Text:  getFuncComments(fn),
-						Slash: fn.Pos() - 1,
+						Text:  getFuncComments(genDecl),
+						Slash: genDecl.Pos() - 1,
 					}},
 				}
 			}
 		}
-
-		return true
-	})
+	}
 
 	file.f.Comments = comments
 
 	reWriteFunc := func(node ast.Node) (ast.Node, bool) {
-
 		return node, true
 	}
 
 	newAst := astrewrite.Walk(file.f, reWriteFunc)
 	var buf bytes.Buffer
-	_ = printer.Fprint(&buf, file.fset, newAst)
+	if err := printer.Fprint(&buf, file.fset, newAst); err != nil {
+		log.Fatal(err)
+	}
 
 	f, err := os.OpenFile(file.filename, os.O_RDWR|os.O_TRUNC, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
-	f.Seek(0, 0)
 
-	f.Write(buf.Bytes())
-	f.Sync()
+	defer func() {
+		if err := f.Close(); err != nil {
+			log.Printf("fail to close file: %v", err)
+		}
+	}()
 
+	if _, err := f.Seek(0, 0); err != nil {
+		log.Printf("fail to seed file: %v", err)
+	}
+	if _, err := f.Write(buf.Bytes()); err != nil {
+		log.Printf("fail to Write file: %v", err)
+	}
+	if err := f.Sync(); err != nil {
+		log.Printf("fail to Sync file: %v", err)
+	}
 }
 
 func getFuncComments(fn *ast.FuncDecl) string {
 	txt := ""
+	privateValue := ""
+	if !fn.Name.IsExported() {
+		privateValue = "private "
+	}
 	if (fn.Type.Params == nil || len(fn.Type.Params.List) == 0) && (fn.Type.Results == nil || len(fn.Type.Results.List) == 0) {
 		if fn.Recv != nil {
-			txt = fmt.Sprintf("// %s is a method that belongs to the %s struct.\n// It does not take any arguments.\n", fn.Name.Name, fn.Recv.List[0].Type.(*ast.Ident))
+			txt = fmt.Sprintf("// %s is a %smethod that belongs to the %s struct.\n// It does not take any arguments.\n", fn.Name.Name, privateValue, fn.Recv.List[0].Type.(*ast.Ident))
 		} else {
-			txt = fmt.Sprintf("// %s is a method .\n// It does not take any arguments.\n", fn.Name.Name)
+			txt = fmt.Sprintf("// %s is a %smethod .\n// It does not take any arguments.\n", fn.Name.Name, privateValue)
 		}
 
 	} else {
 		if fn.Recv != nil {
-			txt = fmt.Sprintf("// %s is a method that belongs to the %s struct", fn.Name.Name, fn.Recv.List[0].Type.(*ast.Ident))
+			txt = fmt.Sprintf("// %s is a %smethod that belongs to the %s struct", fn.Name.Name, privateValue, fn.Recv.List[0].Type.(*ast.Ident))
 		} else {
-			txt = fmt.Sprintf("// %s is a method", fn.Name.Name)
+			txt = fmt.Sprintf("// %s is a %smethod", fn.Name.Name, privateValue)
 		}
 
 		if fn.Type.Params != nil {
@@ -260,9 +404,8 @@ func getFuncComments(fn *ast.FuncDecl) string {
 				}
 				txt += fmt.Sprintf("%s %s", IndefiniteArticle(fmt.Sprintf("%s", res.Type)), res.Type)
 			}
-			txt += "."
 		}
-		txt += "\n"
+		txt += ".\n"
 	}
 	return txt
 }
