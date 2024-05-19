@@ -163,7 +163,7 @@ func SetEventStatus(eventID string, status string) error {
 	return nil
 }
 
-// myLongRunningProcess is a private method which my long running process that take a ctx of type context.Context
+// myLongRunningProcess is a private method which execute my long running process that take a ctx of type context.Context
 // It's return an error if fails, otherwise nil.
 func myLongRunningProcess(ctx context.Context) error {
 	for {
@@ -271,7 +271,6 @@ func New(config Config, logger log.Logger) (Adapter, error) {
 	log.Printf("%s %s %d", var6, Var7, u)
 	return Adapter{}, nil
 }
-
 ```
 
 ## Commands
