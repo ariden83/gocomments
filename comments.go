@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/fatih/astrewrite"
+	strcase "github.com/stoewer/go-strcase"
 )
 
 type file struct {
@@ -326,6 +327,9 @@ func getFuncComments(fn *ast.FuncDecl) string {
 	if !fn.Name.IsExported() {
 		privateValue = "private "
 	}
+
+	explainFunc := convertCamelCaseTo(fn.Name.Name)
+
 	if (fn.Type.Params == nil || len(fn.Type.Params.List) == 0) && (fn.Type.Results == nil || len(fn.Type.Results.List) == 0) {
 		if fn.Recv != nil {
 			funcType := ""
@@ -334,9 +338,9 @@ func getFuncComments(fn *ast.FuncDecl) string {
 					funcType = t.String()
 				}
 			}
-			txt = fmt.Sprintf("// %s is a %smethod that belongs to the %s struct.\n// It does not take any arguments.\n", fn.Name.Name, privateValue, funcType)
+			txt = fmt.Sprintf("// %s is a %smethod%s that belongs to the %s struct.\n// It does not take any arguments.\n", fn.Name.Name, privateValue, explainFunc, funcType)
 		} else {
-			txt = fmt.Sprintf("// %s is a %smethod .\n// It does not take any arguments.\n", fn.Name.Name, privateValue)
+			txt = fmt.Sprintf("// %s is a %smethod%s.\n// It does not take any arguments.\n", fn.Name.Name, privateValue, explainFunc)
 		}
 
 	} else {
@@ -347,9 +351,9 @@ func getFuncComments(fn *ast.FuncDecl) string {
 					funcType = t.String()
 				}
 			}
-			txt = fmt.Sprintf("// %s is a %smethod that belongs to the %s struct", fn.Name.Name, privateValue, funcType)
+			txt = fmt.Sprintf("// %s is a %smethod%s that belongs to the %s struct", fn.Name.Name, privateValue, explainFunc, funcType)
 		} else {
-			txt = fmt.Sprintf("// %s is a %smethod", fn.Name.Name, privateValue)
+			txt = fmt.Sprintf("// %s is a %smethod%s", fn.Name.Name, privateValue, explainFunc)
 		}
 
 		if fn.Type.Params != nil {
@@ -402,43 +406,6 @@ func IndefiniteArticle(word string) string {
 	return "a"
 }
 
-/*
-func getTypeNameForVar(expr any) string {
-	switch expr := expr.(type) {
-	case *ast.Ident:
-		return expr.Name
-	case *ast.AssignStmt:
-		return "AssignStmt"
-	case *ast.StarExpr:
-		return "*" + getTypeName(expr.X)
-	case *ast.SelectorExpr:
-		pkg := getTypeName(expr.X)
-		sel := expr.Sel.Name
-		return pkg + "." + sel
-	case *ast.ArrayType:
-		return "[]" + getTypeName(expr.Elt)
-	case *ast.MapType:
-		return "map[" + getTypeName(expr.Key) + "]" + getTypeName(expr.Value)
-	case *ast.InterfaceType:
-		return "interface{}"
-	case *ast.ChanType:
-		dir := ""
-		switch expr.Dir {
-		case ast.RECV:
-			dir = "<-chan "
-		case ast.SEND:
-			dir = "chan<- "
-		}
-		return dir + getTypeName(expr.Value)
-	case *ast.FuncType:
-		// Handle function types if needed
-		// You can recursively call getTypeName for Params and Results
-		return "func"
-	default:
-		return "unknown"
-	}
-}*/
-
 func getTypeName(expr ast.Expr) string {
 	switch expr := expr.(type) {
 	case *ast.Ident:
@@ -471,4 +438,33 @@ func getTypeName(expr ast.Expr) string {
 	default:
 		return "unknown"
 	}
+}
+
+func convertCamelCaseTo(str string) string {
+	txt := strcase.SnakeCase(str)
+	txt = strings.ReplaceAll(txt, "_", " ")
+	if countWords(txt) < 2 {
+		return ""
+	}
+
+	if strings.HasPrefix(txt, "get") {
+		return replaceFirstWordGetWithRetrieve(txt)
+	} else if strings.HasPrefix(txt, "set") {
+		return replaceFirstWordSetWithRetrieve(txt)
+	}
+
+	return " which execute " + txt
+}
+
+func replaceFirstWordGetWithRetrieve(phrase string) string {
+	return " that retrieve the" + phrase[3:]
+}
+
+func replaceFirstWordSetWithRetrieve(phrase string) string {
+	return " which update the" + phrase[3:]
+}
+
+func countWords(sentence string) int {
+	words := strings.Fields(sentence)
+	return len(words)
 }
