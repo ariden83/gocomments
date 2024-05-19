@@ -1,9 +1,26 @@
 # github.com/fatih/astrewrite v0.0.0-20191207154002-9094e544fcef
 ## explicit
 github.com/fatih/astrewrite
+# github.com/go-faker/faker/v4 v4.4.1
+## explicit; go 1.18
+github.com/go-faker/faker/v4
+github.com/go-faker/faker/v4/pkg/errors
+github.com/go-faker/faker/v4/pkg/interfaces
+github.com/go-faker/faker/v4/pkg/options
+github.com/go-faker/faker/v4/pkg/slice
 # github.com/stoewer/go-strcase v1.3.0
 ## explicit; go 1.11
 github.com/stoewer/go-strcase
+# golang.org/x/text v0.14.0
+## explicit; go 1.18
+golang.org/x/text/cases
+golang.org/x/text/internal
+golang.org/x/text/internal/language
+golang.org/x/text/internal/language/compact
+golang.org/x/text/internal/tag
+golang.org/x/text/language
+golang.org/x/text/transform
+golang.org/x/text/unicode/norm
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
