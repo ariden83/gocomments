@@ -1,0 +1,8 @@
+prefixes:
+  - "common"
+signature: "AutoComBOT"
+update-comments: false
+openai-active: false
+openai-api_key: ""
+openai-url: "https://api.openai.com/v1/chat/completions"
+local: true
