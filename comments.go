@@ -221,7 +221,22 @@ func newFuncTxt(fn *ast.FuncDecl) string {
 	return txt
 }
 
+func (file *file) isOpenAIActive() bool {
+	if file.cfg.OpenAIActive && file.cfg.OpenAIURL != "" && file.cfg.OpenAIAPIKey != "" {
+		return true
+	}
+	return false
+}
+
+func (file *file) commentConstWithOpenAI(genDecl *ast.GenDecl) {
+
+}
+
 func (file *file) commentConst(genDecl *ast.GenDecl) {
+	if file.isOpenAIActive() {
+		file.commentConstWithOpenAI(genDecl)
+		return
+	}
 	for _, spec := range genDecl.Specs {
 		varSpec := spec.(*ast.ValueSpec)
 		hasParenthesis := false
@@ -262,7 +277,15 @@ func (file *file) commentConst(genDecl *ast.GenDecl) {
 	}
 }
 
+func (file *file) commentVarWithOpenAI(genDecl *ast.GenDecl) {
+
+}
+
 func (file *file) commentVar(genDecl *ast.GenDecl) {
+	if file.isOpenAIActive() {
+		file.commentVarWithOpenAI(genDecl)
+		return
+	}
 	for _, spec := range genDecl.Specs {
 		varSpec := spec.(*ast.ValueSpec)
 
@@ -306,7 +329,15 @@ func (file *file) commentVar(genDecl *ast.GenDecl) {
 	}
 }
 
+func (file *file) commentTypeWithOpenAI(genDecl *ast.GenDecl) {
+
+}
+
 func (file *file) commentType(genDecl *ast.GenDecl) {
+	if file.isOpenAIActive() {
+		file.commentTypeWithOpenAI(genDecl)
+		return
+	}
 	for _, spec := range genDecl.Specs {
 
 		typeSpec := spec.(*ast.TypeSpec)
@@ -397,7 +428,15 @@ func isNewFunc(name string) bool {
 	return strings.HasPrefix(name, "New")
 }
 
+func (file *file) commentFuncWithOpenAI(fn *ast.FuncDecl) string {
+	return ""
+}
+
 func (file *file) commentFunc(fn *ast.FuncDecl) string {
+	if file.isOpenAIActive() {
+		return file.commentFuncWithOpenAI(fn)
+	}
+
 	var (
 		txt     string
 		inputs  []ast.Expr
