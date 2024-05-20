@@ -6,18 +6,26 @@ Automatically adding comments to go functions and variables to code such as
 package main
 
 import (
-"context"
-"fmt"
-"log"
-"os"
-"os/signal"
-"syscall"
-"time"
+	"context"
+	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
+const openaiAPIURL = "https://api.openai.com/v1/engines/davinci-codex/completions"
+
+func init() {
+	fmt.Println("Init func")
+}
+
+func InitDatabase() {}
+
 func main() {
-ctx, cancel := context.WithCancel(context.Background())
-defer cancel()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
@@ -34,19 +42,19 @@ defer cancel()
 }
 
 func GetEventStatus(eventID string, status string) error {
-// Implementation goes here
-return nil
+	// Implementation goes here
+	return nil
 }
 
 func SetEventStatus(eventID string, status string) error {
-// Implementation goes here
-return nil
+	// Implementation goes here
+	return nil
 }
 
 func myLongRunningProcess(ctx context.Context) error {
-for {
-select {
-case <-ctx.Done():
+	for {
+		select {
+		case <-ctx.Done():
 
 			fmt.Println("Processus annulé.")
 			return nil
@@ -61,7 +69,7 @@ type toto int
 type tata toto
 
 var (
-Var1 int
+	Var1 int
 
 	Var2 string
 
@@ -77,12 +85,12 @@ const var6 = "tata"
 const Var7 = "toto"
 
 type Test struct {
-Key  string
-KeyB int
-KeyC toto
-KeyD *toto
-KeyE *int
-keyg bool
+	Key  string
+	KeyB int
+	KeyC toto
+	KeyD *toto
+	KeyE *int
+	keyg bool
 }
 
 func (t Test) Tota() {}
@@ -90,11 +98,11 @@ func (t Test) Tota() {}
 func Totbczzsd() {}
 
 func (t Test) Totc(ctx context.Context, value string) (string, error) {
-return "test", nil
+	return "test", nil
 }
 
 func Totd(ctx context.Context, value string) (string, error) {
-return "test", nil
+	return "test", nil
 }
 
 type Config struct {
@@ -104,16 +112,25 @@ type Adapter struct {
 }
 
 func New(config Config, logger log.Logger) (Adapter, error) {
-// Implementation goes here.
-var5 = "toto"
-Var4 = "tata"
-Var1 = 1
-Var2 = "test"
-Var3 = 1
-u := tata(5)
-log.Printf("%s %s %d", var6, Var7, u)
-return Adapter{}, nil
+	// Implementation goes here.
+	var5 = "toto"
+	Var4 = "tata"
+	Var1 = 1
+	Var2 = "test"
+	Var3 = 1
+	u := tata(5)
+	log.Printf("%s %s %d", var6, Var7, u)
+	return Adapter{}, nil
 }
+
+func IsValid(token string) bool {
+	return true
+}
+
+func HasPermission(user string) bool {
+	return true
+}
+
 ```
 
 to give this result
@@ -130,6 +147,17 @@ import (
 	"syscall"
 	"time"
 )
+
+// openaiAPIURL is a private constant that indicates the endpoint URL for accessing to openai api.
+const openaiAPIURL = "https://api.openai.com/v1/engines/davinci-codex/completions"
+
+func init() {
+	fmt.Println("Init func")
+}
+
+// InitDatabase is a method to initializes the database.
+// It does not take any arguments.
+func InitDatabase()	{}
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -212,26 +240,26 @@ type toto int
 type tata toto
 
 var (
-	// Var1 is a variable of type int which provides .
+	// Var1 is a variable of type int.
 	Var1	int
 
-	// Var2 is a variable of type string which provides .
+	// Var2 is a variable of type string.
 	Var2	string
 
-	// Var3 is a variable of type toto which provides .
+	// Var3 is a variable of type toto.
 	Var3	toto
 )
 
-// Var4 is a variable of type string which provides .
+// Var4 is a variable of type string.
 var Var4 string
 
-// var5 is a private variable of type string which provides .
+// var5 is a private variable of type string.
 var var5 string
 
-// var6 is a private constant which provides .
+// var6 is a private constant.
 const var6 = "tata"
 
-// Var7 is a constant which provides .
+// Var7 is a constant.
 const Var7 = "toto"
 
 // Test represents a structure for 
@@ -306,6 +334,27 @@ func New(config Config, logger log.Logger) (Adapter, error) {
 	log.Printf("%s %s %d", var6, Var7, u)
 	return Adapter{}, nil
 }
+
+// IsValid is a method to check the valid that take a token of type string
+// and returns a bool.
+//
+// Example:
+//   valid := IsValid(my-string)
+//   fmt.Printf("%v ", valid)
+func IsValid(token string) bool {
+	return true
+}
+
+// HasPermission is a method to check the permission that take an user of type string
+// and returns a bool.
+//
+// Example:
+//   valid := HasPermission(my-string)
+//   fmt.Printf("%v ", valid)
+func HasPermission(user string) bool {
+	return true
+}
+
 ```
 
 ## Commands
