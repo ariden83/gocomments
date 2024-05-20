@@ -26,6 +26,10 @@ type CommentConfig struct {
 	Signature string `yaml:"signature"`
 	// Allows you to know if you update the tagged comments each time the script is executed.
 	UpdateComments bool `yaml:"update-comments"`
+	// do we use OPENAI to generate function comments
+	OpenAIActive bool   `yaml:"openai-active"`
+	OpenAIAPIKey string `yaml:"openai-api_key"`
+	OpenAIURL    string `yaml:"openai-url"`
 }
 
 // Merge merges the given CommentConfig with this configure and return
@@ -39,8 +43,13 @@ func (cfg *CommentConfig) Merge(newCfg *CommentConfig) *CommentConfig {
 	}
 
 	return &CommentConfig{
-		Local:    local,
-		Prefixes: append(cfg.Prefixes, newCfg.Prefixes...),
+		Local:          local,
+		OpenAIActive:   false,
+		OpenAIAPIKey:   "",
+		OpenAIURL:      "https://api.openai.com/v1/engines/davinci-codex/completions",
+		Prefixes:       append(cfg.Prefixes, newCfg.Prefixes...),
+		Signature:      "AutoComBOT",
+		UpdateComments: false,
 	}
 }
 

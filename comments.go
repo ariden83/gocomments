@@ -2,16 +2,18 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/printer"
 	"go/token"
 	"log"
+	"net/http"
 	"strings"
 
 	"github.com/fatih/astrewrite"
-	strcase "github.com/stoewer/go-strcase"
+	"github.com/stoewer/go-strcase"
 )
 
 type file struct {
@@ -67,176 +69,18 @@ func (file *file) autoComment() ([]byte, error) {
 
 			switch genDecl.Tok {
 			case token.TYPE:
-				for _, spec := range genDecl.Specs {
-
-					typeSpec := spec.(*ast.TypeSpec)
-
-					if typeSpec.Doc.Text() == "" {
-						privateValue := ""
-						if !typeSpec.Name.IsExported() {
-							privateValue = "private "
-						}
-
-						switch structType := typeSpec.Type.(type) {
-						case *ast.StructType:
-							txt := fmt.Sprintf("// %s represents a %sstructure for ", typeSpec.Name, privateValue)
-
-							var mandatoryFields []*ast.Ident
-							var optionFields []*ast.Ident
-
-							// It contains information about the type of drop-off and
-							// optionally, details about the sender's mailbox picking.
-							for _, field := range structType.Fields.List {
-								for _, f := range field.Names {
-									if _, isPointer := field.Type.(*ast.StarExpr); isPointer {
-										optionFields = append(optionFields, f)
-									} else {
-										mandatoryFields = append(mandatoryFields, f)
-									}
-								}
-							}
-
-							if len(mandatoryFields) > 0 {
-								txt += "\n// It contains information about "
-								for i, f := range mandatoryFields {
-									if i > 0 {
-										txt += ", "
-									}
-									privateKey := "private "
-									if f.IsExported() {
-										privateKey = ""
-									}
-									txt += fmt.Sprintf("%s %s%s", IndefiniteArticle(fmt.Sprintf("%s", f.Name)), privateKey, f.Name)
-								}
-							}
-
-							if len(optionFields) > 0 {
-								if len(mandatoryFields) > 0 {
-									txt += " and\n// optionally "
-								} else {
-									txt += "\n// It contains optional information about "
-								}
-
-								for i, f := range optionFields {
-									if i > 0 {
-										txt += ", "
-									}
-									privateKey := "private "
-									if f.IsExported() {
-										privateKey = ""
-									}
-									txt += fmt.Sprintf("%s %s%s", IndefiniteArticle(fmt.Sprintf("%s", f.Name)), privateKey, f.Name)
-								}
-							}
-
-							txt += file.addSignature()
-							txt += ".\n"
-
-							genDecl.Doc = &ast.CommentGroup{
-								List: []*ast.Comment{{
-									Text:  txt,
-									Slash: typeSpec.Pos() - token.Pos(len("type ")+1),
-								}},
-							}
-
-						default:
-							txt := fmt.Sprintf("// %s is a type alias for the %s type.\n// It allows you to create a new type with the same\n// underlying type as int, but with a different name.\n// This can be useful for improving code readability\n// and providing more semantic meaning to your types.\n", typeSpec.Name, structType)
-							txt += file.addSignature()
-							genDecl.Doc = &ast.CommentGroup{
-								List: []*ast.Comment{{
-									Text:  txt,
-									Slash: genDecl.Pos() - 1,
-								}},
-							}
-						}
-					}
-				}
+				file.commentType(genDecl)
 			case token.CONST:
-				for _, spec := range genDecl.Specs {
-					varSpec := spec.(*ast.ValueSpec)
-					// Afficher le nom et le type de la variable
-
-					hasParenthesis := false
-					if genDecl.Lparen > 0 {
-						hasParenthesis = true
-					}
-
-					for _, name := range varSpec.Names {
-						if varSpec.Doc.Text() == "" {
-							exported := ""
-							if !name.IsExported() {
-								exported = "private "
-							}
-							if decl, ok := name.Obj.Decl.(*ast.ValueSpec); ok {
-								txt := fmt.Sprintf("// %s is a %sconstant which provides .", name.Name, exported)
-
-								if hasParenthesis {
-									decl.Doc = &ast.CommentGroup{
-										List: []*ast.Comment{{
-											Text:  txt,
-											Slash: decl.Pos() - 1,
-										}},
-									}
-								} else {
-									txt += file.addSignature()
-									genDecl.Doc = &ast.CommentGroup{
-										List: []*ast.Comment{{
-											Text:  txt,
-											Slash: genDecl.Pos() - 1,
-										}},
-									}
-								}
-							}
-						}
-					}
-				}
+				file.commentConst(genDecl)
 			case token.VAR:
-				for _, spec := range genDecl.Specs {
-					varSpec := spec.(*ast.ValueSpec)
-
-					hasParenthesis := false
-					if genDecl.Lparen > 0 {
-						hasParenthesis = true
-					}
-
-					for _, name := range varSpec.Names {
-						if varSpec.Doc.Text() == "" {
-							exported := ""
-							if !name.IsExported() {
-								exported = "private "
-							}
-
-							if decl, ok := name.Obj.Decl.(*ast.ValueSpec); ok {
-								txt := fmt.Sprintf("// %s is a %svariable of type %s which provides .", name.Name, exported, fmt.Sprintf("%s", decl.Type))
-
-								if hasParenthesis {
-									decl.Doc = &ast.CommentGroup{
-										List: []*ast.Comment{{
-											Text:  txt,
-											Slash: decl.Pos() - 1,
-										}},
-									}
-
-								} else {
-									txt += file.addSignature()
-									genDecl.Doc = &ast.CommentGroup{
-										List: []*ast.Comment{{
-											Text:  txt,
-											Slash: genDecl.Pos() - 1,
-										}},
-									}
-								}
-							}
-						}
-					}
-				}
+				file.commentVar(genDecl)
 			default:
 			}
 		}
 
 		if genDecl, ok := decl.(*ast.FuncDecl); ok {
 			if genDecl.Doc.Text() == "" && genDecl.Name.Name != "main" {
-				txt := getFuncComments(genDecl)
+				txt := file.commentFunc(genDecl)
 				txt += file.addSignature()
 				genDecl.Doc = &ast.CommentGroup{
 					List: []*ast.Comment{{
@@ -261,6 +105,70 @@ func (file *file) autoComment() ([]byte, error) {
 	}
 	log.Printf("result %s", buf.String())
 	return buf.Bytes(), nil
+}
+
+func (file *file) callChatGPT() {
+	if file.cfg.OpenAIAPIKey == "" {
+		fmt.Println("Please set your OpenAI API key in the OPENAI_API_KEY environment variable.")
+		return
+	}
+
+	functionCode := `
+func New(config Config, monitorer monitor.Monitorer, logger logging.Logger) (filestorage.Adapter, error) {
+    // Function implementation
+}
+`
+
+	prompt := fmt.Sprintf("Generate a detailed comment in English for the following Go function:\n%s", functionCode)
+
+	requestBody, err := json.Marshal(map[string]interface{}{
+		"prompt":      prompt,
+		"max_tokens":  150,
+		"temperature": 0.7,
+	})
+
+	if err != nil {
+		fmt.Println("Error creating request body:", err)
+		return
+	}
+
+	req, err := http.NewRequest("POST", file.cfg.OpenAIURL, bytes.NewBuffer(requestBody))
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+file.cfg.OpenAIAPIKey)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error making request:", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	var response map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		fmt.Println("Error decoding response:", err)
+		return
+	}
+
+	if choices, ok := response["choices"].([]interface{}); ok && len(choices) > 0 {
+		if choice, ok := choices[0].(map[string]interface{}); ok {
+			if text, ok := choice["text"].(string); ok {
+				fmt.Println("Generated comment:")
+				fmt.Println(text)
+			} else {
+				fmt.Println("Error: no text found in response choice.")
+			}
+		} else {
+			fmt.Println("Error: invalid choice format.")
+		}
+	} else {
+		fmt.Println("Error: no choices found in response.")
+	}
 }
 
 func isNewFunc(name string) bool {
@@ -317,7 +225,175 @@ func newFuncTxt(fn *ast.FuncDecl) string {
 	return txt
 }
 
-func getFuncComments(fn *ast.FuncDecl) string {
+func (file *file) commentConst(genDecl *ast.GenDecl) {
+	for _, spec := range genDecl.Specs {
+		varSpec := spec.(*ast.ValueSpec)
+		hasParenthesis := false
+		if genDecl.Lparen > 0 {
+			hasParenthesis = true
+		}
+
+		for _, name := range varSpec.Names {
+			if varSpec.Doc.Text() == "" {
+				exported := ""
+				if !name.IsExported() {
+					exported = "private "
+				}
+				if decl, ok := name.Obj.Decl.(*ast.ValueSpec); ok {
+					txt := fmt.Sprintf("// %s is a %sconstant which provides .", name.Name, exported)
+
+					if hasParenthesis {
+						decl.Doc = &ast.CommentGroup{
+							List: []*ast.Comment{{
+								Text:  txt,
+								Slash: decl.Pos() - 1,
+							}},
+						}
+					} else {
+						txt += file.addSignature()
+						genDecl.Doc = &ast.CommentGroup{
+							List: []*ast.Comment{{
+								Text:  txt,
+								Slash: genDecl.Pos() - 1,
+							}},
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+func (file *file) commentVar(genDecl *ast.GenDecl) {
+	for _, spec := range genDecl.Specs {
+		varSpec := spec.(*ast.ValueSpec)
+
+		hasParenthesis := false
+		if genDecl.Lparen > 0 {
+			hasParenthesis = true
+		}
+
+		for _, name := range varSpec.Names {
+			if varSpec.Doc.Text() == "" {
+				exported := ""
+				if !name.IsExported() {
+					exported = "private "
+				}
+
+				if decl, ok := name.Obj.Decl.(*ast.ValueSpec); ok {
+					txt := fmt.Sprintf("// %s is a %svariable of type %s which provides .", name.Name, exported, fmt.Sprintf("%s", decl.Type))
+
+					if hasParenthesis {
+						decl.Doc = &ast.CommentGroup{
+							List: []*ast.Comment{{
+								Text:  txt,
+								Slash: decl.Pos() - 1,
+							}},
+						}
+
+					} else {
+						txt += file.addSignature()
+						genDecl.Doc = &ast.CommentGroup{
+							List: []*ast.Comment{{
+								Text:  txt,
+								Slash: genDecl.Pos() - 1,
+							}},
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+func (file *file) commentType(genDecl *ast.GenDecl) {
+	for _, spec := range genDecl.Specs {
+
+		typeSpec := spec.(*ast.TypeSpec)
+
+		if typeSpec.Doc.Text() == "" {
+			privateValue := ""
+			if !typeSpec.Name.IsExported() {
+				privateValue = "private "
+			}
+
+			switch structType := typeSpec.Type.(type) {
+			case *ast.StructType:
+				txt := fmt.Sprintf("// %s represents a %sstructure for ", typeSpec.Name, privateValue)
+
+				var mandatoryFields []*ast.Ident
+				var optionFields []*ast.Ident
+
+				// It contains information about the type of drop-off and
+				// optionally, details about the sender's mailbox picking.
+				for _, field := range structType.Fields.List {
+					for _, f := range field.Names {
+						if _, isPointer := field.Type.(*ast.StarExpr); isPointer {
+							optionFields = append(optionFields, f)
+						} else {
+							mandatoryFields = append(mandatoryFields, f)
+						}
+					}
+				}
+
+				if len(mandatoryFields) > 0 {
+					txt += "\n// It contains information about "
+					for i, f := range mandatoryFields {
+						if i > 0 {
+							txt += ", "
+						}
+						privateKey := "private "
+						if f.IsExported() {
+							privateKey = ""
+						}
+						txt += fmt.Sprintf("%s %s%s", indefiniteArticle(fmt.Sprintf("%s", f.Name)), privateKey, f.Name)
+					}
+				}
+
+				if len(optionFields) > 0 {
+					if len(mandatoryFields) > 0 {
+						txt += " and\n// optionally "
+					} else {
+						txt += "\n// It contains optional information about "
+					}
+
+					for i, f := range optionFields {
+						if i > 0 {
+							txt += ", "
+						}
+						privateKey := "private "
+						if f.IsExported() {
+							privateKey = ""
+						}
+						txt += fmt.Sprintf("%s %s%s", indefiniteArticle(fmt.Sprintf("%s", f.Name)), privateKey, f.Name)
+					}
+				}
+
+				txt += file.addSignature()
+				txt += ".\n"
+
+				genDecl.Doc = &ast.CommentGroup{
+					List: []*ast.Comment{{
+						Text:  txt,
+						Slash: typeSpec.Pos() - token.Pos(len("type ")+1),
+					}},
+				}
+
+			default:
+				txt := fmt.Sprintf("// %s is a type alias for the %s type.\n// It allows you to create a new type with the same\n// underlying type as int, but with a different name.\n// This can be useful for improving code readability\n// and providing more semantic meaning to your types.\n", typeSpec.Name, structType)
+				txt += file.addSignature()
+				genDecl.Doc = &ast.CommentGroup{
+					List: []*ast.Comment{{
+						Text:  txt,
+						Slash: genDecl.Pos() - 1,
+					}},
+				}
+			}
+		}
+	}
+}
+
+func (file *file) commentFunc(fn *ast.FuncDecl) string {
 	var (
 		txt     string
 		inputs  []ast.Expr
@@ -371,7 +447,7 @@ func getFuncComments(fn *ast.FuncDecl) string {
 				}
 				for _, name := range param.Names {
 					inputs = append(inputs, param.Type)
-					txt += fmt.Sprintf("%s %s of type %s", IndefiniteArticle(fmt.Sprintf("%s", name.Name)), name.Name, getTypeName(param.Type))
+					txt += fmt.Sprintf("%s %s of type %s", indefiniteArticle(fmt.Sprintf("%s", name.Name)), name.Name, getTypeName(param.Type))
 				}
 			}
 		}
@@ -390,7 +466,7 @@ func getFuncComments(fn *ast.FuncDecl) string {
 						txt += "\n// and returns "
 					}
 					outputs = append(outputs, res.Type)
-					txt += fmt.Sprintf("%s %s", IndefiniteArticle(fmt.Sprintf("%s", res.Type)), res.Type)
+					txt += fmt.Sprintf("%s %s", indefiniteArticle(fmt.Sprintf("%s", res.Type)), res.Type)
 				}
 			}
 			txt += errorReturnMsg
@@ -403,7 +479,7 @@ func getFuncComments(fn *ast.FuncDecl) string {
 	return txt
 }
 
-func IndefiniteArticle(word string) string {
+func indefiniteArticle(word string) string {
 	word = strings.ToLower(word)
 	anLetters := "aeiou"
 	if strings.ContainsRune(anLetters, rune(word[0])) {
