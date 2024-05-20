@@ -3,12 +3,15 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/printer"
 	"go/token"
+	"io"
 	"log"
+	"moul.io/http2curl"
 	"net/http"
 	"strings"
 
@@ -55,8 +58,8 @@ func processComments(fileName string, src []byte, cache *CommentConfigCache) ([]
 }
 
 func (file *file) addSignature() string {
-	if file.cfg.Signature != "" {
-		return "\\ @author " + file.cfg.Signature + "."
+	if file.cfg.Signature != nil {
+		return "//\n// Author: " + *file.cfg.Signature + "."
 	}
 	return ""
 }
@@ -107,68 +110,71 @@ func (file *file) autoComment() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (file *file) callOpenAI(functionCode string) {
-	if file.cfg.OpenAIAPIKey == "" {
-		fmt.Println("Please set your OpenAI API key in the OPENAI_API_KEY environment variable.")
-		return
-	}
-
-	functionCode = `
-func New(config Config, monitorer monitor.Monitorer, logger logging.Logger) (filestorage.Adapter, error) {
-    // Function implementation
+type OpenAIMessage struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
 }
-`
 
-	prompt := fmt.Sprintf("Generate a detailed comment in English for the following Go function:\n%s", functionCode)
+func (file *file) callOpenAI(functionCode string) (string, error) {
+	prompt := fmt.Sprintf("Generate a detailed comment in English for the following Go function. The comment should be written in a way that is helpful for other developers. Include the purpose of the function, a description of its parameters and return values, potential error conditions, and any side effects or important details. Here is the function :\n%s", functionCode)
 
 	requestBody, err := json.Marshal(map[string]interface{}{
-		"prompt":      prompt,
 		"max_tokens":  150,
 		"temperature": 0.7,
+		"model":       "gpt-3.5-turbo",
+		"messages": []OpenAIMessage{
+			{Role: "system", Content: "You are a helpful assistant."},
+			{Role: "user", Content: prompt},
+		},
 	})
 
 	if err != nil {
-		fmt.Println("Error creating request body:", err)
-		return
+		return "", fmt.Errorf("error creating request body: %v", err)
 	}
 
 	req, err := http.NewRequest("POST", file.cfg.OpenAIURL, bytes.NewBuffer(requestBody))
 	if err != nil {
-		fmt.Println("Error creating request:", err)
-		return
+		return "", fmt.Errorf("error creating request: %v", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+file.cfg.OpenAIAPIKey)
+	req.Header.Set("Authorization", "Bearer "+*file.cfg.OpenAIAPIKey)
 
 	client := &http.Client{}
+
+	command, _ := http2curl.GetCurlCommand(req)
+	fmt.Println(fmt.Sprintf("%s", command))
+
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Error making request:", err)
-		return
+		return "", fmt.Errorf("error making request: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(resp.Body)
 
 	var response map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		fmt.Println("Error decoding response:", err)
-		return
+		return "", fmt.Errorf("error decoding response: %v", err)
 	}
 
 	if choices, ok := response["choices"].([]interface{}); ok && len(choices) > 0 {
 		if choice, ok := choices[0].(map[string]interface{}); ok {
 			if text, ok := choice["text"].(string); ok {
-				fmt.Println("Generated comment:")
-				fmt.Println(text)
+				return text, nil
+
 			} else {
-				fmt.Println("Error: no text found in response choice.")
+				return "", errors.New("error: no text found in response choice")
 			}
 		} else {
-			fmt.Println("Error: invalid choice format.")
+			return "", errors.New("error: invalid choice format")
 		}
-	} else {
-		fmt.Println("Error: no choices found in response.")
 	}
+
+	return "", errors.New("error: no choices found in response")
 }
 
 func newFuncTxt(fn *ast.FuncDecl) string {
@@ -189,18 +195,18 @@ func newFuncTxt(fn *ast.FuncDecl) string {
 					instanceReturnMsg += typeReturnKey
 
 				} else {
-					errorReturnMsg = "\n// It's return an error if the initialization fails, otherwise nil."
+					errorReturnMsg = "// It's return an error if the initialization fails, otherwise nil.\n"
 				}
 			}
 		}
 	}
 
-	txt := fmt.Sprintf("// %s creates a new instance%s.", fn.Name.Name, instanceReturnMsg)
+	txt := fmt.Sprintf("// %s creates a new instance%s.\n", fn.Name.Name, instanceReturnMsg)
 	if (fn.Type.Params == nil || len(fn.Type.Params.List) == 0) && (fn.Type.Results == nil || len(fn.Type.Results.List) == 0) {
 	} else {
 		if fn.Type.Params != nil {
 			if len(fn.Type.Params.List) != 0 {
-				txt += fmt.Sprintf("\n// It initializes the %s with the provided ", initializesMsg)
+				txt += fmt.Sprintf("// It initializes the %s with the provided ", initializesMsg)
 			}
 
 			for i, param := range fn.Type.Params.List {
@@ -212,7 +218,7 @@ func newFuncTxt(fn *ast.FuncDecl) string {
 				}
 			}
 		}
-		txt += "."
+		txt += ".\n"
 	}
 	if errorReturnMsg != "" {
 		txt += errorReturnMsg
@@ -222,10 +228,16 @@ func newFuncTxt(fn *ast.FuncDecl) string {
 }
 
 func (file *file) isOpenAIActive() bool {
-	if file.cfg.OpenAIActive && file.cfg.OpenAIURL != "" && file.cfg.OpenAIAPIKey != "" {
-		return true
+	if file.cfg.OpenAIActive == nil || *file.cfg.OpenAIActive == false {
+		return false
 	}
-	return false
+	if file.cfg.OpenAIAPIKey == nil || *file.cfg.OpenAIAPIKey == "" {
+		log.Fatal("Please set your OpenAI API key in the OPENAI_API_KEY variable.")
+	}
+	if file.cfg.OpenAIURL == "" {
+		log.Fatal("Please set the OpenAI API URL in the OPENAI_API_URL variable.")
+	}
+	return true
 }
 
 func (file *file) commentConstWithOpenAI(genDecl *ast.GenDecl) {
@@ -263,6 +275,7 @@ func (file *file) commentConst(genDecl *ast.GenDecl) {
 							}},
 						}
 					} else {
+						txt += ".\n"
 						txt += file.addSignature()
 						genDecl.Doc = &ast.CommentGroup{
 							List: []*ast.Comment{{
@@ -315,6 +328,7 @@ func (file *file) commentVar(genDecl *ast.GenDecl) {
 						}
 
 					} else {
+						txt += ".\n"
 						txt += file.addSignature()
 						genDecl.Doc = &ast.CommentGroup{
 							List: []*ast.Comment{{
@@ -400,8 +414,8 @@ func (file *file) commentType(genDecl *ast.GenDecl) {
 					}
 				}
 
-				txt += file.addSignature()
 				txt += ".\n"
+				txt += file.addSignature()
 
 				genDecl.Doc = &ast.CommentGroup{
 					List: []*ast.Comment{{
@@ -429,7 +443,63 @@ func isNewFunc(name string) bool {
 }
 
 func (file *file) commentFuncWithOpenAI(fn *ast.FuncDecl) string {
-	return ""
+	functionName := fn.Name.Name
+
+	var (
+		input    string
+		output   string
+		funcType string
+	)
+
+	if fn.Type.Params != nil && len(fn.Type.Params.List) > 0 {
+		for i, param := range fn.Type.Params.List {
+			if i > 0 {
+				input += ", "
+			}
+			for _, name := range param.Names {
+				input += fmt.Sprintf("%s %s", name.Name, getTypeName(param.Type))
+			}
+		}
+	}
+
+	if fn.Type.Results != nil && len(fn.Type.Results.List) > 0 {
+		for i, res := range fn.Type.Results.List {
+			if i > 0 {
+				output += ", "
+			}
+			output += fmt.Sprintf("%s", getTypeName(res.Type))
+		}
+	}
+
+	if fn.Recv != nil {
+		if fn.Recv != nil && len(fn.Recv.List) > 0 {
+			funcTypeName := ""
+			txt := ""
+			switch expr := fn.Recv.List[0].Type.(type) {
+			case *ast.Ident:
+				funcTypeName = expr.Name
+				txt = funcTypeName
+			case *ast.StarExpr:
+				if f, ok := expr.X.(*ast.Ident); ok {
+					txt = "*" + f.Name
+					funcTypeName = f.Name
+				}
+			}
+
+			funcType = "(" + strings.ToLower(string(funcTypeName[0])) + " " + txt + ") "
+		}
+	}
+
+	functionCode := fmt.Sprintf(`func %s%s(%s) (%s) {
+    // Function implementation
+	}`, funcType, functionName, input, output)
+
+	txt, err := file.callOpenAI(functionCode)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("get error on openAI %v", err))
+		return ""
+	}
+	return txt
 }
 
 func (file *file) commentFunc(fn *ast.FuncDecl) string {
@@ -500,7 +570,7 @@ func (file *file) commentFunc(fn *ast.FuncDecl) string {
 			for i, res := range fn.Type.Results.List {
 				typeReturnKey := fmt.Sprintf("%s", res.Type)
 				if typeReturnKey == "error" {
-					errorReturnMsg = "\n// It's return an error if fails, otherwise nil"
+					errorReturnMsg = ".\n// It's return an error if fails, otherwise nil"
 					outputs = append(outputs, res.Type)
 				} else {
 					if i > 0 {
@@ -729,12 +799,11 @@ func detectExprTypeKey(expr ast.Expr) string {
 		case "float64":
 			return "nb"
 		case "error":
-			fmt.Println(fmt.Sprintf("err found %+v", v))
 			return "err"
 		case "Context":
 			return "ctx"
 		default:
-			fmt.Println(fmt.Sprintf("%+v", v))
+			fmt.Println(fmt.Sprintf("detectExprTypeKey : %+v", v))
 			return "unknown"
 		}
 	case *ast.SelectorExpr:
