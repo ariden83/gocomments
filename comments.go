@@ -79,7 +79,7 @@ func (file *file) autoComment() ([]byte, error) {
 		}
 
 		if genDecl, ok := decl.(*ast.FuncDecl); ok {
-			if genDecl.Doc.Text() == "" && genDecl.Name.Name != "main" {
+			if genDecl.Doc.Text() == "" && genDecl.Name.Name != "main" && genDecl.Name.Name != "init" {
 				txt := file.commentFunc(genDecl)
 				txt += file.addSignature()
 				genDecl.Doc = &ast.CommentGroup{
@@ -107,13 +107,13 @@ func (file *file) autoComment() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (file *file) callChatGPT() {
+func (file *file) callOpenAI(functionCode string) {
 	if file.cfg.OpenAIAPIKey == "" {
 		fmt.Println("Please set your OpenAI API key in the OPENAI_API_KEY environment variable.")
 		return
 	}
 
-	functionCode := `
+	functionCode = `
 func New(config Config, monitorer monitor.Monitorer, logger logging.Logger) (filestorage.Adapter, error) {
     // Function implementation
 }
@@ -169,10 +169,6 @@ func New(config Config, monitorer monitor.Monitorer, logger logging.Logger) (fil
 	} else {
 		fmt.Println("Error: no choices found in response.")
 	}
-}
-
-func isNewFunc(name string) bool {
-	return strings.HasPrefix(name, "New")
 }
 
 func newFuncTxt(fn *ast.FuncDecl) string {
@@ -240,7 +236,9 @@ func (file *file) commentConst(genDecl *ast.GenDecl) {
 					exported = "private "
 				}
 				if decl, ok := name.Obj.Decl.(*ast.ValueSpec); ok {
-					txt := fmt.Sprintf("// %s is a %sconstant which provides .", name.Name, exported)
+
+					explainConst := convertVarToCamelCaseTo(name.Name)
+					txt := fmt.Sprintf("// %s is a %sconstant%s.", name.Name, exported, explainConst)
 
 					if hasParenthesis {
 						decl.Doc = &ast.CommentGroup{
@@ -280,8 +278,10 @@ func (file *file) commentVar(genDecl *ast.GenDecl) {
 					exported = "private "
 				}
 
+				explainVar := convertVarToCamelCaseTo(name.Name)
+
 				if decl, ok := name.Obj.Decl.(*ast.ValueSpec); ok {
-					txt := fmt.Sprintf("// %s is a %svariable of type %s which provides .", name.Name, exported, fmt.Sprintf("%s", decl.Type))
+					txt := fmt.Sprintf("// %s is a %svariable of type %s%s.", name.Name, exported, fmt.Sprintf("%s", decl.Type), explainVar)
 
 					if hasParenthesis {
 						decl.Doc = &ast.CommentGroup{
@@ -391,6 +391,10 @@ func (file *file) commentType(genDecl *ast.GenDecl) {
 			}
 		}
 	}
+}
+
+func isNewFunc(name string) bool {
+	return strings.HasPrefix(name, "New")
 }
 
 func (file *file) commentFunc(fn *ast.FuncDecl) string {
@@ -522,6 +526,19 @@ func getTypeName(expr ast.Expr) string {
 	}
 }
 
+func convertVarToCamelCaseTo(str string) string {
+	txt := strcase.SnakeCase(str)
+	txt = strings.ReplaceAll(txt, "_", " ")
+	if countWords(txt) < 2 {
+		return ""
+	}
+	if strings.Contains(txt, "url") {
+		txt = strings.Replace(txt, "url", "", -1)
+		return fmt.Sprintf(" that indicates the endpoint URL for accessing to %s", txt)
+	}
+	return txt
+}
+
 func convertCamelCaseTo(str string) string {
 	txt := strcase.SnakeCase(str)
 	txt = strings.ReplaceAll(txt, "_", " ")
@@ -529,10 +546,42 @@ func convertCamelCaseTo(str string) string {
 		return ""
 	}
 
-	if strings.HasPrefix(txt, "get") {
+	findPrefix := strings.ToLower(txt)
+
+	if strings.HasPrefix(findPrefix, "get") {
 		return replaceFirstWordGetWithRetrieve(txt)
-	} else if strings.HasPrefix(txt, "set") {
+
+	} else if strings.HasPrefix(findPrefix, "set") {
 		return replaceFirstWordSetWithRetrieve(txt)
+
+	} else if strings.HasPrefix(findPrefix, "init") {
+		return replaceFirstWordSetWithInitialize(txt)
+
+	} else if strings.HasPrefix(findPrefix, "delete") {
+
+	} else if strings.HasPrefix(findPrefix, "is") {
+		return replaceFirstWordSetWithCheckForIs(txt)
+
+	} else if strings.HasPrefix(findPrefix, "create") {
+
+	} else if strings.HasPrefix(findPrefix, "update") {
+
+	} else if strings.HasPrefix(findPrefix, "has") {
+		return replaceFirstWordSetWithCheckForHas(txt)
+	} else if strings.HasPrefix(findPrefix, "handle") {
+
+	} else if strings.HasPrefix(findPrefix, "process") {
+
+	} else if strings.HasPrefix(findPrefix, "run") {
+
+	} else if strings.HasPrefix(findPrefix, "load") {
+
+	} else if strings.HasPrefix(findPrefix, "save") {
+
+	} else if strings.HasPrefix(findPrefix, "init") {
+
+	} else if strings.HasPrefix(findPrefix, "shutdown") {
+
 	}
 
 	return " which execute " + txt
@@ -544,6 +593,18 @@ func replaceFirstWordGetWithRetrieve(phrase string) string {
 
 func replaceFirstWordSetWithRetrieve(phrase string) string {
 	return " which update the" + phrase[3:]
+}
+
+func replaceFirstWordSetWithInitialize(phrase string) string {
+	return " to initializes the" + phrase[4:]
+}
+
+func replaceFirstWordSetWithCheckForIs(phrase string) string {
+	return " to check the" + phrase[2:]
+}
+
+func replaceFirstWordSetWithCheckForHas(phrase string) string {
+	return " to check the" + phrase[3:]
 }
 
 func countWords(sentence string) int {
