@@ -151,6 +151,12 @@ func main() {
 
 // GetEventStatus is a method that retrieve the event status that take an eventID of type string, a status of type string
 // It's return an error if fails, otherwise nil.
+//
+// Example:
+//   err := GetEventStatus(my-string, my-string)
+//   if err != nil {
+//       log.Fatalf("Error: %v", err)
+//   }
 func GetEventStatus(eventID string, status string) error {
 
 	return nil
@@ -158,6 +164,12 @@ func GetEventStatus(eventID string, status string) error {
 
 // SetEventStatus is a method which update the event status that take an eventID of type string, a status of type string
 // It's return an error if fails, otherwise nil.
+//
+// Example:
+//   err := SetEventStatus(my-string, my-string)
+//   if err != nil {
+//       log.Fatalf("Error: %v", err)
+//   }
 func SetEventStatus(eventID string, status string) error {
 
 	return nil
@@ -165,6 +177,13 @@ func SetEventStatus(eventID string, status string) error {
 
 // myLongRunningProcess is a private method which execute my long running process that take a ctx of type context.Context
 // It's return an error if fails, otherwise nil.
+//
+// Example:
+//   ctx := context.Background()
+//   err := myLongRunningProcess(ctx)
+//   if err != nil {
+//       log.Fatalf("Error: %v", err)
+//   }
 func myLongRunningProcess(ctx context.Context) error {
 	for {
 		select {
@@ -238,6 +257,14 @@ func Totbczzsd()	{}
 // Totc is a method that belongs to the Test struct that take a ctx of type context.Context, a value of type string
 // and returns a string
 // It's return an error if fails, otherwise nil.
+//
+// Example:
+//   ctx := context.Background()
+//   str, err := Totc(ctx, my-string)
+//   if err != nil {
+//       log.Fatalf("Error: %v", err)
+//   }
+//   fmt.Printf("%v ", str)
 func (t Test) Totc(ctx context.Context, value string) (string, error) {
 	return "test", nil
 }
@@ -245,6 +272,14 @@ func (t Test) Totc(ctx context.Context, value string) (string, error) {
 // Totd is a method that take a ctx of type context.Context, a value of type string
 // and returns a string
 // It's return an error if fails, otherwise nil.
+//
+// Example:
+//   ctx := context.Background()
+//   str, err := Totd(ctx, my-string)
+//   if err != nil {
+//       log.Fatalf("Error: %v", err)
+//   }
+//   fmt.Printf("%v ", str)
 func Totd(ctx context.Context, value string) (string, error) {
 	return "test", nil
 }
