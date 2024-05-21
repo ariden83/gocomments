@@ -58,7 +58,7 @@ func processComments(fileName string, src []byte, cache *CommentConfigCache) ([]
 }
 
 func (file *file) addSignature() string {
-	if file.cfg.Signature != nil {
+	if file.cfg.Signature != nil && *file.cfg.Signature != "" {
 		return "//\n// Author: " + *file.cfg.Signature + "."
 	}
 	return ""
