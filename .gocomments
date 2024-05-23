@@ -6,3 +6,5 @@ openai-active: false
 openai-api_key: ""
 openai-url: "https://api.openai.com/v1/chat/completions"
 local: true
+anthropic-active: false
+anthropic-url: "https://api.anthropic.com/v1/complete"
