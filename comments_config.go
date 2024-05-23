@@ -25,11 +25,9 @@ type CommentConfig struct {
 	// If empty, the automatically added prefix is "auto".
 	Signature *string `yaml:"signature"`
 	// Allows you to know if you update the tagged comments each time the script is executed.
-	UpdateComments *bool `yaml:"update-comments"`
-	// do we use OPENAI to generate function comments
-	OpenAIActive *bool   `yaml:"openai-active"`
-	OpenAIAPIKey *string `yaml:"openai-api_key"`
-	OpenAIURL    string  `yaml:"openai-url"`
+	UpdateComments bool            `yaml:"update-comments"`
+	OpenAI         OpenAIConfig    `yaml:"openai"`
+	Anthropic      AnthropicConfig `yaml:"anthropic"`
 }
 
 // Merge merges the given CommentConfig with this configure and return
@@ -40,22 +38,27 @@ func (cfg *CommentConfig) Merge(newCfg *CommentConfig) *CommentConfig {
 	if newCfg.Local != "" {
 		cfg.Local = newCfg.Local
 	}
-	if newCfg.OpenAIActive != nil {
-		cfg.OpenAIActive = newCfg.OpenAIActive
+	if newCfg.OpenAI.Active != nil {
+		cfg.OpenAI.Active = newCfg.OpenAI.Active
 	}
 	if newCfg.Signature != nil {
 		cfg.Signature = newCfg.Signature
 	}
-	if newCfg.OpenAIActive != nil {
-		cfg.OpenAIActive = newCfg.OpenAIActive
+	if newCfg.OpenAI.Active != nil {
+		cfg.OpenAI.Active = newCfg.OpenAI.Active
 	}
-	if newCfg.OpenAIAPIKey != nil {
-		cfg.OpenAIAPIKey = newCfg.OpenAIAPIKey
+	if newCfg.OpenAI.APIKey != nil {
+		cfg.OpenAI.APIKey = newCfg.OpenAI.APIKey
 	}
-	if cfg.OpenAIURL == "" && newCfg.OpenAIURL != "" {
-		cfg.OpenAIURL = newCfg.OpenAIURL
+	if newCfg.OpenAI.URL != "" {
+		cfg.OpenAI.URL = newCfg.OpenAI.URL
 	}
-
+	if newCfg.Anthropic.Active != nil {
+		cfg.Anthropic.Active = newCfg.Anthropic.Active
+	}
+	if newCfg.Anthropic.URL != "" {
+		cfg.Anthropic.URL = newCfg.Anthropic.URL
+	}
 	return cfg
 }
 

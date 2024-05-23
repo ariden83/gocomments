@@ -2,17 +2,12 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/printer"
 	"go/token"
-	"io"
 	"log"
-	"moul.io/http2curl"
-	"net/http"
 	"strings"
 
 	"github.com/fatih/astrewrite"
@@ -20,11 +15,12 @@ import (
 )
 
 type file struct {
-	f        *ast.File
-	fSet     *token.FileSet
-	src      []byte
-	fileName string
-	cfg      *CommentConfig
+	f         *ast.File
+	fSet      *token.FileSet
+	src       []byte
+	fileName  string
+	cfg       *CommentConfig
+	processor commentsProcess
 }
 
 func processComments(fileName string, src []byte, cache *CommentConfigCache) ([]byte, error) {
@@ -46,22 +42,18 @@ func processComments(fileName string, src []byte, cache *CommentConfigCache) ([]
 		return nil, err
 	}
 
+	processor := newProcessor(cfg)
+
 	file := file{
-		cfg:      cfg,
-		f:        f,
-		src:      src,
-		fileName: fileName,
-		fSet:     fileSet,
+		cfg:       cfg,
+		processor: processor,
+		f:         f,
+		src:       src,
+		fileName:  fileName,
+		fSet:      fileSet,
 	}
 
 	return file.autoComment()
-}
-
-func (file *file) addSignature() string {
-	if file.cfg.Signature != nil && *file.cfg.Signature != "" {
-		return "//\n// Author: " + *file.cfg.Signature + "."
-	}
-	return ""
 }
 
 func (file *file) autoComment() ([]byte, error) {
@@ -72,25 +64,24 @@ func (file *file) autoComment() ([]byte, error) {
 
 			switch genDecl.Tok {
 			case token.TYPE:
-				file.commentType(genDecl)
+				if err := file.commentType(genDecl); err != nil {
+					return nil, err
+				}
 			case token.CONST:
-				file.commentConst(genDecl)
+				if err := file.commentConst(genDecl); err != nil {
+					return nil, err
+				}
 			case token.VAR:
-				file.commentVar(genDecl)
+				if err := file.commentVar(genDecl); err != nil {
+					return nil, err
+				}
 			default:
 			}
 		}
 
 		if genDecl, ok := decl.(*ast.FuncDecl); ok {
-			if genDecl.Doc.Text() == "" && genDecl.Name.Name != "main" && genDecl.Name.Name != "init" {
-				txt := file.commentFunc(genDecl)
-				txt += file.addSignature()
-				genDecl.Doc = &ast.CommentGroup{
-					List: []*ast.Comment{{
-						Text:  txt,
-						Slash: genDecl.Pos() - 1,
-					}},
-				}
+			if err := file.commentFunc(genDecl); err != nil {
+				return nil, err
 			}
 		}
 	}
@@ -106,149 +97,64 @@ func (file *file) autoComment() ([]byte, error) {
 	if err := printer.Fprint(&buf, file.fSet, newAst); err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("result %s", buf.String())
+
 	return buf.Bytes(), nil
 }
 
-type OpenAIMessage struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
-}
+func generateFuncCode(fn *ast.FuncDecl) string {
+	functionName := fn.Name.Name
 
-func (file *file) callOpenAI(functionCode string) (string, error) {
-	prompt := fmt.Sprintf("Generate a detailed comment in English for the following Go function. The comment should be written in a way that is helpful for other developers. Include the purpose of the function, a description of its parameters and return values, potential error conditions, and any side effects or important details. Here is the function :\n%s", functionCode)
+	var (
+		input    string
+		output   string
+		funcType string
+	)
 
-	requestBody, err := json.Marshal(map[string]interface{}{
-		"max_tokens":  150,
-		"temperature": 0.7,
-		"model":       "gpt-3.5-turbo",
-		"messages": []OpenAIMessage{
-			{Role: "system", Content: "You are a helpful assistant."},
-			{Role: "user", Content: prompt},
-		},
-	})
-
-	if err != nil {
-		return "", fmt.Errorf("error creating request body: %v", err)
-	}
-
-	req, err := http.NewRequest("POST", file.cfg.OpenAIURL, bytes.NewBuffer(requestBody))
-	if err != nil {
-		return "", fmt.Errorf("error creating request: %v", err)
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+*file.cfg.OpenAIAPIKey)
-
-	client := &http.Client{}
-
-	command, _ := http2curl.GetCurlCommand(req)
-	fmt.Println(fmt.Sprintf("%s", command))
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", fmt.Errorf("error making request: %v", err)
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-
-		}
-	}(resp.Body)
-
-	var response map[string]interface{}
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return "", fmt.Errorf("error decoding response: %v", err)
-	}
-
-	if choices, ok := response["choices"].([]interface{}); ok && len(choices) > 0 {
-		if choice, ok := choices[0].(map[string]interface{}); ok {
-			if text, ok := choice["text"].(string); ok {
-				return text, nil
-
-			} else {
-				return "", errors.New("error: no text found in response choice")
+	if fn.Type.Params != nil && len(fn.Type.Params.List) > 0 {
+		for i, param := range fn.Type.Params.List {
+			if i > 0 {
+				input += ", "
 			}
-		} else {
-			return "", errors.New("error: invalid choice format")
+			for _, name := range param.Names {
+				input += fmt.Sprintf("%s %s", name.Name, getTypeName(param.Type))
+			}
 		}
 	}
 
-	return "", errors.New("error: no choices found in response")
-}
+	if fn.Type.Results != nil && len(fn.Type.Results.List) > 0 {
+		for i, res := range fn.Type.Results.List {
+			if i > 0 {
+				output += ", "
+			}
+			output += fmt.Sprintf("%s", getTypeName(res.Type))
+		}
+	}
 
-func newFuncTxt(fn *ast.FuncDecl) string {
-	instanceReturnMsg := ""
-	initializesMsg := ""
-	errorReturnMsg := ""
-	if fn.Type.Results != nil {
-		if len(fn.Type.Results.List) != 0 {
-			for i, res := range fn.Type.Results.List {
-				typeReturnKey := fmt.Sprintf("%s", res.Type)
-				if typeReturnKey != "error" {
-					if i > 0 {
-						instanceReturnMsg += " and "
-					} else if i == 0 {
-						instanceReturnMsg += " of "
-						initializesMsg = typeReturnKey
-					}
-					instanceReturnMsg += typeReturnKey
-
-				} else {
-					errorReturnMsg = "// It's return an error if the initialization fails, otherwise nil.\n"
+	if fn.Recv != nil {
+		if fn.Recv != nil && len(fn.Recv.List) > 0 {
+			funcTypeName := ""
+			txt := ""
+			switch expr := fn.Recv.List[0].Type.(type) {
+			case *ast.Ident:
+				funcTypeName = expr.Name
+				txt = funcTypeName
+			case *ast.StarExpr:
+				if f, ok := expr.X.(*ast.Ident); ok {
+					txt = "*" + f.Name
+					funcTypeName = f.Name
 				}
 			}
+
+			funcType = "(" + strings.ToLower(string(funcTypeName[0])) + " " + txt + ") "
 		}
 	}
 
-	txt := fmt.Sprintf("// %s creates a new instance%s.\n", fn.Name.Name, instanceReturnMsg)
-	if (fn.Type.Params == nil || len(fn.Type.Params.List) == 0) && (fn.Type.Results == nil || len(fn.Type.Results.List) == 0) {
-	} else {
-		if fn.Type.Params != nil {
-			if len(fn.Type.Params.List) != 0 {
-				txt += fmt.Sprintf("// It initializes the %s with the provided ", initializesMsg)
-			}
-
-			for i, param := range fn.Type.Params.List {
-				if i > 0 {
-					txt += ", "
-				}
-				for _, name := range param.Names {
-					txt += fmt.Sprintf("%s of type %s", name.Name, getTypeName(param.Type))
-				}
-			}
-		}
-		txt += ".\n"
-	}
-	if errorReturnMsg != "" {
-		txt += errorReturnMsg
-	}
-
-	return txt
+	return fmt.Sprintf(`func %s%s(%s) (%s) {
+    // Function implementation
+	}`, funcType, functionName, input, output)
 }
 
-func (file *file) isOpenAIActive() bool {
-	if file.cfg.OpenAIActive == nil || *file.cfg.OpenAIActive == false {
-		return false
-	}
-	if file.cfg.OpenAIAPIKey == nil || *file.cfg.OpenAIAPIKey == "" {
-		log.Fatal("Please set your OpenAI API key in the OPENAI_API_KEY variable.")
-	}
-	if file.cfg.OpenAIURL == "" {
-		log.Fatal("Please set the OpenAI API URL in the OPENAI_API_URL variable.")
-	}
-	return true
-}
-
-func (file *file) commentConstWithOpenAI(genDecl *ast.GenDecl) {
-
-}
-
-func (file *file) commentConst(genDecl *ast.GenDecl) {
-	if file.isOpenAIActive() {
-		file.commentConstWithOpenAI(genDecl)
-		return
-	}
+func (file *file) commentConst(genDecl *ast.GenDecl) error {
 	for _, spec := range genDecl.Specs {
 		varSpec := spec.(*ast.ValueSpec)
 		hasParenthesis := false
@@ -258,14 +164,15 @@ func (file *file) commentConst(genDecl *ast.GenDecl) {
 
 		for _, name := range varSpec.Names {
 			if varSpec.Doc.Text() == "" {
-				exported := ""
+				exported := true
 				if !name.IsExported() {
-					exported = "private "
+					exported = false
 				}
 				if decl, ok := name.Obj.Decl.(*ast.ValueSpec); ok {
-
-					explainConst := convertVarToCamelCaseTo(name.Name)
-					txt := fmt.Sprintf("// %s is a %sconstant%s.", name.Name, exported, explainConst)
+					txt, err := file.processor.commentConst(name.Name, exported)
+					if err != nil {
+						return fmt.Errorf("fail to add comments on const: %v", err)
+					}
 
 					if hasParenthesis {
 						decl.Doc = &ast.CommentGroup{
@@ -288,17 +195,17 @@ func (file *file) commentConst(genDecl *ast.GenDecl) {
 			}
 		}
 	}
+	return nil
 }
 
-func (file *file) commentVarWithOpenAI(genDecl *ast.GenDecl) {
-
-}
-
-func (file *file) commentVar(genDecl *ast.GenDecl) {
-	if file.isOpenAIActive() {
-		file.commentVarWithOpenAI(genDecl)
-		return
+func (file *file) addSignature() string {
+	if file.cfg.Signature != nil && *file.cfg.Signature != "" {
+		return "//\n// Author: " + *file.cfg.Signature + "."
 	}
+	return ""
+}
+
+func (file *file) commentVar(genDecl *ast.GenDecl) error {
 	for _, spec := range genDecl.Specs {
 		varSpec := spec.(*ast.ValueSpec)
 
@@ -309,15 +216,19 @@ func (file *file) commentVar(genDecl *ast.GenDecl) {
 
 		for _, name := range varSpec.Names {
 			if varSpec.Doc.Text() == "" {
-				exported := ""
+				exported := true
 				if !name.IsExported() {
-					exported = "private "
+					exported = false
 				}
 
 				explainVar := convertVarToCamelCaseTo(name.Name)
 
 				if decl, ok := name.Obj.Decl.(*ast.ValueSpec); ok {
-					txt := fmt.Sprintf("// %s is a %svariable of type %s%s.", name.Name, exported, fmt.Sprintf("%s", decl.Type), explainVar)
+
+					txt, err := file.processor.commentVar(name.Name, fmt.Sprintf("%s", decl.Type), explainVar, exported)
+					if err != nil {
+						return fmt.Errorf("fail to add comments on var: %v", err)
+					}
 
 					if hasParenthesis {
 						decl.Doc = &ast.CommentGroup{
@@ -341,17 +252,10 @@ func (file *file) commentVar(genDecl *ast.GenDecl) {
 			}
 		}
 	}
+	return nil
 }
 
-func (file *file) commentTypeWithOpenAI(genDecl *ast.GenDecl) {
-
-}
-
-func (file *file) commentType(genDecl *ast.GenDecl) {
-	if file.isOpenAIActive() {
-		file.commentTypeWithOpenAI(genDecl)
-		return
-	}
+func (file *file) commentType(genDecl *ast.GenDecl) error {
 	for _, spec := range genDecl.Specs {
 
 		typeSpec := spec.(*ast.TypeSpec)
@@ -436,160 +340,42 @@ func (file *file) commentType(genDecl *ast.GenDecl) {
 			}
 		}
 	}
+
+	return nil
 }
 
 func isNewFunc(name string) bool {
 	return strings.HasPrefix(name, "New")
 }
 
-func (file *file) commentFuncWithOpenAI(fn *ast.FuncDecl) string {
-	functionName := fn.Name.Name
-
-	var (
-		input    string
-		output   string
-		funcType string
-	)
-
-	if fn.Type.Params != nil && len(fn.Type.Params.List) > 0 {
-		for i, param := range fn.Type.Params.List {
-			if i > 0 {
-				input += ", "
-			}
-			for _, name := range param.Names {
-				input += fmt.Sprintf("%s %s", name.Name, getTypeName(param.Type))
-			}
-		}
-	}
-
-	if fn.Type.Results != nil && len(fn.Type.Results.List) > 0 {
-		for i, res := range fn.Type.Results.List {
-			if i > 0 {
-				output += ", "
-			}
-			output += fmt.Sprintf("%s", getTypeName(res.Type))
-		}
-	}
-
-	if fn.Recv != nil {
-		if fn.Recv != nil && len(fn.Recv.List) > 0 {
-			funcTypeName := ""
-			txt := ""
-			switch expr := fn.Recv.List[0].Type.(type) {
-			case *ast.Ident:
-				funcTypeName = expr.Name
-				txt = funcTypeName
-			case *ast.StarExpr:
-				if f, ok := expr.X.(*ast.Ident); ok {
-					txt = "*" + f.Name
-					funcTypeName = f.Name
-				}
-			}
-
-			funcType = "(" + strings.ToLower(string(funcTypeName[0])) + " " + txt + ") "
-		}
-	}
-
-	functionCode := fmt.Sprintf(`func %s%s(%s) (%s) {
-    // Function implementation
-	}`, funcType, functionName, input, output)
-
-	txt, err := file.callOpenAI(functionCode)
-	if err != nil {
-		fmt.Println(fmt.Sprintf("get error on openAI %v", err))
-		return ""
-	}
-	return txt
+// RequestPayload defines the structure of the request payload to the Anthropic API
+type RequestPayload struct {
+	Prompt      string  `json:"prompt"`
+	MaxTokens   int     `json:"max_tokens"`
+	Model       string  `json:"model"`
+	Temperature float64 `json:"temperature"`
 }
 
-func (file *file) commentFunc(fn *ast.FuncDecl) string {
-	if file.isOpenAIActive() {
-		return file.commentFuncWithOpenAI(fn)
-	}
+// ResponsePayload defines the structure of the response payload from the Anthropic API
+type ResponsePayload struct {
+	Completion string `json:"completion"`
+}
 
-	var (
-		txt     string
-		inputs  []ast.Expr
-		outputs []ast.Expr
-	)
-	if isNewFunc(fn.Name.Name) {
-		return newFuncTxt(fn)
-	}
-
-	privateValue := ""
-	if !fn.Name.IsExported() {
-		privateValue = "private "
-	}
-
-	explainFunc := convertCamelCaseTo(fn.Name.Name)
-
-	if (fn.Type.Params == nil || len(fn.Type.Params.List) == 0) && (fn.Type.Results == nil || len(fn.Type.Results.List) == 0) {
-		if fn.Recv != nil {
-			funcType := ""
-			if fn.Recv != nil && len(fn.Recv.List) > 0 {
-				if t, ok := fn.Recv.List[0].Type.(*ast.Ident); ok {
-					funcType = t.String()
-				}
-			}
-			txt = fmt.Sprintf("// %s is a %smethod%s that belongs to the %s struct.\n// It does not take any arguments.\n", fn.Name.Name, privateValue, explainFunc, funcType)
-		} else {
-			txt = fmt.Sprintf("// %s is a %smethod%s.\n// It does not take any arguments.\n", fn.Name.Name, privateValue, explainFunc)
+func (file *file) commentFunc(genDecl *ast.FuncDecl) error {
+	if genDecl.Doc.Text() == "" && genDecl.Name.Name != "main" && genDecl.Name.Name != "init" {
+		txt, err := file.processor.commentFunc(genDecl)
+		if err != nil {
+			return err
 		}
-
-	} else {
-		if fn.Recv != nil {
-			funcType := ""
-			if fn.Recv != nil && len(fn.Recv.List) > 0 {
-				if t, ok := fn.Recv.List[0].Type.(*ast.Ident); ok {
-					funcType = t.String()
-				}
-			}
-			txt = fmt.Sprintf("// %s is a %smethod%s that belongs to the %s struct", fn.Name.Name, privateValue, explainFunc, funcType)
-		} else {
-			txt = fmt.Sprintf("// %s is a %smethod%s", fn.Name.Name, privateValue, explainFunc)
+		txt += file.addSignature()
+		genDecl.Doc = &ast.CommentGroup{
+			List: []*ast.Comment{{
+				Text:  txt,
+				Slash: genDecl.Pos() - 1,
+			}},
 		}
-
-		if fn.Type.Params != nil {
-			if len(fn.Type.Params.List) != 0 {
-				txt += " that take "
-			}
-
-			for i, param := range fn.Type.Params.List {
-				if i > 0 {
-					txt += ", "
-				}
-				for _, name := range param.Names {
-					inputs = append(inputs, param.Type)
-					txt += fmt.Sprintf("%s %s of type %s", indefiniteArticle(fmt.Sprintf("%s", name.Name)), name.Name, getTypeName(param.Type))
-				}
-			}
-		}
-
-		if fn.Type.Results != nil && len(fn.Type.Results.List) != 0 {
-			errorReturnMsg := ""
-			for i, res := range fn.Type.Results.List {
-				typeReturnKey := fmt.Sprintf("%s", res.Type)
-				if typeReturnKey == "error" {
-					errorReturnMsg = ".\n// It's return an error if fails, otherwise nil"
-					outputs = append(outputs, res.Type)
-				} else {
-					if i > 0 {
-						txt += " and "
-					} else {
-						txt += "\n// and returns "
-					}
-					outputs = append(outputs, res.Type)
-					txt += fmt.Sprintf("%s %s", indefiniteArticle(fmt.Sprintf("%s", res.Type)), res.Type)
-				}
-			}
-			txt += errorReturnMsg
-		}
-		txt += ".\n"
 	}
-
-	txt += exampleGenerator(fn.Name.Name, inputs, outputs)
-
-	return txt
+	return nil
 }
 
 func indefiniteArticle(word string) string {

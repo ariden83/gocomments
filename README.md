@@ -409,10 +409,12 @@ prefixes:
 signature: "AutoComBOT"
 # Allows you to know if you update the tagged comments each time the script is executed.
 update-comments: false
-# do we use OPENAI to generate function comments
+# Do we use OPENAI to generate function comments
 openai-active: false
-# if openai-active is active, set your OPENAI api key. 
+# If openai-active is active, set your OPENAI api key. 
 openai-api_key: ""
-# if openai-active is active, set your OPENAI api URL. 
+# If openai-active is active, set your OPENAI api URL. 
 openai-url: "https://api.openai.com/v1/chat/completions"
+# Do we use Anthropic Claude to generate function comments
+anthropic-active: false
 ```
