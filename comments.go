@@ -275,7 +275,7 @@ func (file *file) commentConst(genDecl *ast.GenDecl) {
 							}},
 						}
 					} else {
-						txt += ".\n"
+						txt += "\n"
 						txt += file.addSignature()
 						genDecl.Doc = &ast.CommentGroup{
 							List: []*ast.Comment{{
@@ -736,7 +736,6 @@ func exampleGenerator(funcName string, inputs []ast.Expr, outputs []ast.Expr) st
 
 	outputsStr := make([]string, len(outputs))
 	var outputsStrWithoutErrors []string
-	// Générer des exemples pour les paramètres de sortie
 	if len(outputs) > 0 {
 		for i, output := range outputs {
 			exprType := detectExprTypeKey(output)
@@ -755,7 +754,6 @@ func exampleGenerator(funcName string, inputs []ast.Expr, outputs []ast.Expr) st
 
 	exampleComment += funcName + "("
 
-	// Générer des exemples pour les paramètres d'entrée
 	inputsStr := make([]string, len(inputs))
 	for i, input := range inputs {
 		exprType := detectExprTypeValue(input)
@@ -777,6 +775,7 @@ func exampleGenerator(funcName string, inputs []ast.Expr, outputs []ast.Expr) st
 	}
 	return exampleComment
 }
+
 func generatePrintfFormat(sliceLength int) string {
 	if sliceLength <= 0 {
 		return ""

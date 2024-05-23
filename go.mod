@@ -1,4 +1,4 @@
-module github.com/ariden/auto-add-golang-comments
+module github.com/ariden/gocomments
 
 go 1.21.6
 

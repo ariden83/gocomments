@@ -7,3 +7,6 @@ build-app:
 
 run:
 	./bin/gocomments .
+
+install:
+	sudo go install ./
