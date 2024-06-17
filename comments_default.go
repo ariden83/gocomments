@@ -3,9 +3,12 @@ package main
 import (
 	"fmt"
 	"go/ast"
+	"strings"
 )
 
-type defaultProcess struct{}
+type defaultProcess struct {
+	activeExamples bool
+}
 
 func (d *defaultProcess) isActive() bool {
 	return true
@@ -93,7 +96,7 @@ func (d *defaultProcess) commentFunc(fn *ast.FuncDecl) (string, error) {
 		txt += ".\n"
 	}
 
-	txt += exampleGenerator(fn.Name.Name, inputs, outputs)
+	txt += d.exampleGenerator(fn.Name.Name, inputs, outputs)
 
 	return txt, nil
 }
@@ -171,4 +174,128 @@ func (d *defaultProcess) newFuncTxt(fn *ast.FuncDecl) string {
 	}
 
 	return txt
+}
+
+func (d *defaultProcess) exampleGenerator(funcName string, inputs []ast.Expr, outputs []ast.Expr) string {
+	if !d.activeExamples {
+		return ""
+	} else if len(inputs) == 0 && len(outputs) == 0 {
+		return ""
+	}
+
+	exampleComment := "//\n// Example:\n//   "
+
+	hasError := false
+
+	if len(inputs) > 0 && detectExprTypeKey(inputs[0]) == "ctx" {
+		exampleComment += "ctx := context.Background()\n//   "
+	}
+
+	outputsStr := make([]string, len(outputs))
+	var outputsStrWithoutErrors []string
+	if len(outputs) > 0 {
+		for i, output := range outputs {
+			exprType := detectExprTypeKey(output)
+			if exprType == "unknown" {
+				return ""
+			} else if exprType == "err" {
+				hasError = true
+			} else {
+				outputsStrWithoutErrors = append(outputsStrWithoutErrors, fmt.Sprintf("%v", exprType))
+			}
+			outputsStr[i] = fmt.Sprintf("%v", exprType)
+		}
+		exampleComment += strings.Join(outputsStr, ", ")
+		exampleComment += " := "
+	}
+
+	exampleComment += funcName + "("
+
+	inputsStr := make([]string, len(inputs))
+	for i, input := range inputs {
+		exprType := detectExprTypeValue(input)
+		if exprType == "unknown" {
+			return ""
+		}
+		inputsStr[i] = fmt.Sprintf("%s", exprType)
+	}
+	exampleComment += strings.Join(inputsStr, ", ")
+	exampleComment += ")\n"
+
+	if hasError {
+		exampleComment += "//   if err != nil {\n//       log.Fatalf(\"Error: %v\", err)\n//   }\n"
+	}
+
+	lenOutputs := len(outputsStrWithoutErrors)
+	if lenOutputs > 0 {
+		exampleComment += "//   fmt.Printf(\"" + generatePrintfFormat(lenOutputs) + "\", " + strings.Join(outputsStrWithoutErrors, ", ") + ")\n"
+	}
+	return exampleComment
+}
+
+func generatePrintfFormat(sliceLength int) string {
+	if sliceLength <= 0 {
+		return ""
+	}
+	return strings.Repeat("%v ", sliceLength)
+}
+
+func detectExprTypeKey(expr ast.Expr) string {
+	switch v := expr.(type) {
+	case *ast.Ident:
+		switch v.Name {
+		case "bool":
+			return "valid"
+		case "int":
+			return "nb"
+		case "string":
+			return "str"
+		case "float32":
+			return "nb"
+		case "float64":
+			return "nb"
+		case "error":
+			return "err"
+		case "Context":
+			return "ctx"
+		default:
+			fmt.Println(fmt.Sprintf("detectExprTypeKey : %+v", v))
+			return "unknown"
+		}
+	case *ast.SelectorExpr:
+		// handle qualified types like "pkg.Type"
+		return detectExprTypeValue(v.Sel)
+	default:
+		return "unknown"
+	}
+}
+
+func detectExprTypeValue(expr ast.Expr) string {
+	switch v := expr.(type) {
+	case *ast.Ident:
+		switch v.Name {
+		case "bool":
+			return "true"
+		case "int":
+			return "50"
+		case "string":
+			return "my-string"
+		case "float32":
+			return "56.32"
+		case "float64":
+			return "56.64"
+		case "error":
+			return "nil"
+		case "Context":
+			return "ctx"
+		default:
+			fmt.Println(fmt.Sprintf("%+v", v))
+			return "unknown"
+		}
+	case *ast.SelectorExpr:
+		// handle qualified types like "pkg.Type"
+		return detectExprTypeValue(v.Sel)
+	default:
+		return "unknown"
+	}
 }

@@ -409,6 +409,8 @@ prefixes:
 signature: "AutoComBOT"
 # Allows you to know if you update the tagged comments each time the script is executed.
 update-comments: false
+# Allows to add examples in comments.
+active-examples: false
 # Do we use OPENAI to generate function comments
 openai-active: false
 # If openai-active is active, set your OPENAI api key. 
@@ -418,3 +420,21 @@ openai-url: "https://api.openai.com/v1/chat/completions"
 # Do we use Anthropic Claude to generate function comments
 anthropic-active: false
 ```
+
+## In progress
+
+#### A) Generate comments using [Open AI](https://openai.com/index/introducing-chatgpt-and-whisper-apis/)
+#### B) Generate comments using [AWS AI](https://aws.amazon.com/fr/ai/)
+#### C) Generate comments using our own private AI
+
+- Generate the model with this command :
+
+> make generate-model
+
+## Resources
+
+- This notebook demonstrates how to generate python code based on the natural language description using TensorFlow, HuggingFace and Mostly Basic Python Programming Benchmark from Google Research. [Text-to-code Generation with TensorFlow, 🤗 & MBPP](https://www.kaggle.com/code/rhtsingh/text-to-code-generation-with-tensorflow-mbpp)
+- Common Crawl maintains a free, open repository of web crawl data that can be used by anyone. [commoncrawl](https://commoncrawl.org/)
+- [tensorflow > Catalog > c4](https://www.tensorflow.org/datasets/catalog/c4?hl=fr) 
+- CodeSearchNet is a collection of datasets and benchmarks that explore the problem of code retrieval using natural language. This research is a continuation of some ideas presented in this blog post and is a joint collaboration between GitHub and the Deep Program Understanding group at Microsoft Research - Cambridge. [CodeSearchNet](https://github.com/github/CodeSearchNet)
+

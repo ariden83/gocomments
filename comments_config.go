@@ -26,6 +26,7 @@ type CommentConfig struct {
 	Signature *string `yaml:"signature"`
 	// Allows you to know if you update the tagged comments each time the script is executed.
 	UpdateComments bool            `yaml:"update-comments"`
+	ActiveExamples bool            `yaml:"active-examples"`
 	OpenAI         OpenAIConfig    `yaml:"openai"`
 	Anthropic      AnthropicConfig `yaml:"anthropic"`
 }
