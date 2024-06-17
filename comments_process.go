@@ -14,7 +14,9 @@ type commentsProcess interface {
 
 func newProcessor(cfg *CommentConfig) commentsProcess {
 	if cfg == nil {
-		return &defaultProcess{}
+		return &defaultProcess{
+			activeExamples: cfg.ActiveExamples,
+		}
 	}
 
 	openAIProcess := openAI{
