@@ -437,4 +437,3 @@ anthropic-active: false
 - Common Crawl maintains a free, open repository of web crawl data that can be used by anyone. [commoncrawl](https://commoncrawl.org/)
 - [tensorflow > Catalog > c4](https://www.tensorflow.org/datasets/catalog/c4?hl=fr) 
 - CodeSearchNet is a collection of datasets and benchmarks that explore the problem of code retrieval using natural language. This research is a continuation of some ideas presented in this blog post and is a joint collaboration between GitHub and the Deep Program Understanding group at Microsoft Research - Cambridge. [CodeSearchNet](https://github.com/github/CodeSearchNet)
-

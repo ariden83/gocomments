@@ -1,7 +1,3 @@
-# !pip install transformers
-# !pip install tf-keras
-# !pip install -q datasets # install HF datasets library
-
 import os
 import time
 import math
@@ -207,7 +203,7 @@ class ProgressBar(object):
         prog_width = int(self.width * recv_per)
         if prog_width > 0:
             bar += '=' * (prog_width - 1)
-            if current< self.n_total:
+            if current < self.n_total:
                 bar += ">"
             else:
                 bar += '='
