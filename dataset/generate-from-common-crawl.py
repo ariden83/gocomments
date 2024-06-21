@@ -1,5 +1,6 @@
 import re
 import json
+from pyspark.sql import SparkSession
 
 def find_golang_code(content):
     golang_pattern = re.compile(r'```go(.*?)```', re.DOTALL)
@@ -20,8 +21,6 @@ def collect_golang_code(file_path):
 golang_code_snippets = collect_golang_code('./warc/file')
 for snippet in golang_code_snippets:
     print(snippet)
-
-from pyspark.sql import SparkSession
 
 # Initialize Spark session
 spark = SparkSession.builder \
