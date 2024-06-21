@@ -1,0 +1,1926 @@
+[
+    {
+        "name": "dropCreateDir",
+        "comment": "// dropCreateDir drop and create output directory"
+    },
+    {
+        "name": "renderCategories",
+        "comment": "// directory is not exists"
+    },
+    {
+        "name": "renderSitemap",
+        "comment": "// of all html files in same style."
+    },
+    {
+        "name": "_",
+        "comment": "// find only first ul"
+    },
+    {
+        "name": "renderIndex",
+        "comment": "// renderIndex generate site html (index.html) from markdown file"
+    },
+    {
+        "name": "TestDuplicatedLinks",
+        "comment": "// impossible to test the alphabetical order"
+    },
+    {
+        "name": "TestSeparator",
+        "comment": "// Test if an entry has description, it must be separated from link with ` - `"
+    },
+    {
+        "name": "t",
+        "comment": "// LIMIT specifies the max number of repositories that are added in a single run of the script"
+    },
+    {
+        "name": "a",
+        "comment": "// Accounts defines a key/value for user/pass list of authorized logins."
+    },
+    {
+        "name": "BasicAuthForRealm",
+        "comment": "// (see http://tools.ietf.org/html/rfc2617#section-1.2)"
+    },
+    {
+        "name": "BasicAuth",
+        "comment": "// the key is the user name and the value is the password."
+    },
+    {
+        "name": "BasicAuthForProxy",
+        "comment": "// If the realm is empty, \"Proxy Authorization Required\" will be used by default."
+    },
+    {
+        "name": "TestBasicAuth",
+        "comment": "// license that can be found in the LICENSE file."
+    },
+    {
+        "name": "BenchmarkOneRoute",
+        "comment": "// license that can be found in the LICENSE file."
+    },
+    {
+        "name": "c",
+        "comment": "/************************************/"
+    },
+    {
+        "name": "c",
+        "comment": "// This has to be used when the context has to be passed to a goroutine."
+    },
+    {
+        "name": "c",
+        "comment": "// this function will return \"main.handleGetUsers\"."
+    },
+    {
+        "name": "c",
+        "comment": "// following the semantics of HandlerName()"
+    },
+    {
+        "name": "c",
+        "comment": "// Handler returns the main handler."
+    },
+    {
+        "name": "c",
+        "comment": "//\t})"
+    },
+    {
+        "name": "c",
+        "comment": "// See example in GitHub."
+    },
+    {
+        "name": "c",
+        "comment": "// IsAborted returns true if the current context was aborted."
+    },
+    {
+        "name": "c",
+        "comment": "// for this request are not called."
+    },
+    {
+        "name": "c",
+        "comment": "// For example, a failed attempt to authenticate a request could use: context.AbortWithStatus(401)."
+    },
+    {
+        "name": "c",
+        "comment": "// It also sets the Content-Type as \"application/json\"."
+    },
+    {
+        "name": "c",
+        "comment": "// See Context.Error() for more details."
+    },
+    {
+        "name": "c",
+        "comment": "// Error will panic if err is nil."
+    },
+    {
+        "name": "c",
+        "comment": "// It also lazy initializes  c.Keys if it was not used previously."
+    },
+    {
+        "name": "c",
+        "comment": "// If the value does not exist it returns (nil, false)"
+    },
+    {
+        "name": "c",
+        "comment": "// MustGet returns the value for the given key if it exists, otherwise it panics."
+    },
+    {
+        "name": "c",
+        "comment": "// GetString returns the value associated with the key as a string."
+    },
+    {
+        "name": "c",
+        "comment": "// GetBool returns the value associated with the key as a boolean."
+    },
+    {
+        "name": "c",
+        "comment": "// GetInt returns the value associated with the key as an integer."
+    },
+    {
+        "name": "c",
+        "comment": "// GetInt64 returns the value associated with the key as an integer."
+    },
+    {
+        "name": "c",
+        "comment": "// GetUint returns the value associated with the key as an unsigned integer."
+    },
+    {
+        "name": "c",
+        "comment": "// GetUint64 returns the value associated with the key as an unsigned integer."
+    },
+    {
+        "name": "c",
+        "comment": "// GetFloat64 returns the value associated with the key as a float64."
+    },
+    {
+        "name": "c",
+        "comment": "// GetTime returns the value associated with the key as time."
+    },
+    {
+        "name": "c",
+        "comment": "// GetDuration returns the value associated with the key as a duration."
+    },
+    {
+        "name": "c",
+        "comment": "// GetStringSlice returns the value associated with the key as a slice of strings."
+    },
+    {
+        "name": "c",
+        "comment": "// GetStringMap returns the value associated with the key as a map of interfaces."
+    },
+    {
+        "name": "c",
+        "comment": "// GetStringMapString returns the value associated with the key as a map of strings."
+    },
+    {
+        "name": "c",
+        "comment": "// GetStringMapStringSlice returns the value associated with the key as a map to a slice of strings."
+    },
+    {
+        "name": "c",
+        "comment": "//\t})"
+    },
+    {
+        "name": "c",
+        "comment": "// Result: \"/user/1\""
+    },
+    {
+        "name": "c",
+        "comment": "//\t\t   c.Query(\"wtf\") == \"\""
+    },
+    {
+        "name": "c",
+        "comment": "//\tc.DefaultQuery(\"lastname\", \"none\") == \"\""
+    },
+    {
+        "name": "c",
+        "comment": "//\t(\"\", true) == c.GetQuery(\"lastname\")"
+    },
+    {
+        "name": "c",
+        "comment": "// The length of the slice depends on the number of params with the given key."
+    },
+    {
+        "name": "c",
+        "comment": "// a boolean value whether at least one value exists for the given key."
+    },
+    {
+        "name": "c",
+        "comment": "// QueryMap returns a map for a given query key."
+    },
+    {
+        "name": "c",
+        "comment": "// whether at least one value exists for the given key."
+    },
+    {
+        "name": "c",
+        "comment": "// when it exists, otherwise it returns an empty string `(\"\")`."
+    },
+    {
+        "name": "c",
+        "comment": "// See: PostForm() and GetPostForm() for further information."
+    },
+    {
+        "name": "c",
+        "comment": "//\t                            -->  (\"\", false) := GetPostForm(\"email\") // do nothing with email"
+    },
+    {
+        "name": "c",
+        "comment": "// The length of the slice depends on the number of params with the given key."
+    },
+    {
+        "name": "c",
+        "comment": "// a boolean value whether at least one value exists for the given key."
+    },
+    {
+        "name": "c",
+        "comment": "// PostFormMap returns a map for a given form key."
+    },
+    {
+        "name": "c",
+        "comment": "// whether at least one value exists for the given key."
+    },
+    {
+        "name": "c",
+        "comment": "// get is an internal method and returns a map which satisfies conditions."
+    },
+    {
+        "name": "c",
+        "comment": "// FormFile returns the first file for the provided form key."
+    },
+    {
+        "name": "c",
+        "comment": "// MultipartForm is the parsed multipart form, including file uploads."
+    },
+    {
+        "name": "c",
+        "comment": "// SaveUploadedFile uploads the form file to specific dst."
+    },
+    {
+        "name": "c",
+        "comment": "// It writes a 400 error and sets Content-Type header \"text/plain\" in the response if input is not valid."
+    },
+    {
+        "name": "c",
+        "comment": "// BindJSON is a shortcut for c.MustBindWith(obj, binding.JSON)."
+    },
+    {
+        "name": "c",
+        "comment": "// BindXML is a shortcut for c.MustBindWith(obj, binding.BindXML)."
+    },
+    {
+        "name": "c",
+        "comment": "// BindQuery is a shortcut for c.MustBindWith(obj, binding.Query)."
+    },
+    {
+        "name": "c",
+        "comment": "// BindYAML is a shortcut for c.MustBindWith(obj, binding.YAML)."
+    },
+    {
+        "name": "c",
+        "comment": "// BindTOML is a shortcut for c.MustBindWith(obj, binding.TOML)."
+    },
+    {
+        "name": "c",
+        "comment": "// BindPlain is a shortcut for c.MustBindWith(obj, binding.Plain)."
+    },
+    {
+        "name": "c",
+        "comment": "// BindHeader is a shortcut for c.MustBindWith(obj, binding.Header)."
+    },
+    {
+        "name": "c",
+        "comment": "// It will abort the request with HTTP 400 if any error occurs."
+    },
+    {
+        "name": "c",
+        "comment": "// See the binding package."
+    },
+    {
+        "name": "c",
+        "comment": "// Like c.Bind() but this method does not set the response status code to 400 or abort if input is not valid."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindJSON is a shortcut for c.ShouldBindWith(obj, binding.JSON)."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindXML is a shortcut for c.ShouldBindWith(obj, binding.XML)."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindQuery is a shortcut for c.ShouldBindWith(obj, binding.Query)."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindYAML is a shortcut for c.ShouldBindWith(obj, binding.YAML)."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindTOML is a shortcut for c.ShouldBindWith(obj, binding.TOML)."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindPlain is a shortcut for c.ShouldBindWith(obj, binding.Plain)."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindHeader is a shortcut for c.ShouldBindWith(obj, binding.Header)."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindUri binds the passed struct pointer using the specified binding engine."
+    },
+    {
+        "name": "c",
+        "comment": "// See the binding package."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindWith for better performance if you need to call only once."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindBodyWithJSON is a shortcut for c.ShouldBindBodyWith(obj, binding.JSON)."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindBodyWithXML is a shortcut for c.ShouldBindBodyWith(obj, binding.XML)."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindBodyWithYAML is a shortcut for c.ShouldBindBodyWith(obj, binding.YAML)."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindBodyWithTOML is a shortcut for c.ShouldBindBodyWith(obj, binding.TOML)."
+    },
+    {
+        "name": "c",
+        "comment": "// ShouldBindBodyWithJSON is a shortcut for c.ShouldBindBodyWith(obj, binding.JSON)."
+    },
+    {
+        "name": "c",
+        "comment": "// the remote IP (coming from Request.RemoteAddr) is returned."
+    },
+    {
+        "name": "c",
+        "comment": "// RemoteIP parses the IP from Request.RemoteAddr, normalizes and returns the IP (without the port)."
+    },
+    {
+        "name": "c",
+        "comment": "// ContentType returns the Content-Type header of the request."
+    },
+    {
+        "name": "c",
+        "comment": "// handshake is being initiated by the client."
+    },
+    {
+        "name": "bodyAllowedForStatus",
+        "comment": "// bodyAllowedForStatus is a copy of http.bodyAllowedForStatus non-exported function."
+    },
+    {
+        "name": "c",
+        "comment": "// Status sets the HTTP response code."
+    },
+    {
+        "name": "c",
+        "comment": "// If value == \"\", this method removes the header `c.Writer.Header().Del(key)`"
+    },
+    {
+        "name": "c",
+        "comment": "// GetHeader returns value from request headers."
+    },
+    {
+        "name": "c",
+        "comment": "// GetRawData returns stream data."
+    },
+    {
+        "name": "c",
+        "comment": "// SetSameSite with cookie"
+    },
+    {
+        "name": "c",
+        "comment": "// silently dropped."
+    },
+    {
+        "name": "c",
+        "comment": "// be returned."
+    },
+    {
+        "name": "c",
+        "comment": "// Render writes the response headers and calls render.Render to render data."
+    },
+    {
+        "name": "c",
+        "comment": "// See http://golang.org/doc/articles/wiki/"
+    },
+    {
+        "name": "c",
+        "comment": "// more CPU and bandwidth consuming. Use Context.JSON() instead."
+    },
+    {
+        "name": "c",
+        "comment": "// It also sets the Content-Type as \"application/json\"."
+    },
+    {
+        "name": "c",
+        "comment": "// It also sets the Content-Type as \"application/javascript\"."
+    },
+    {
+        "name": "c",
+        "comment": "// It also sets the Content-Type as \"application/json\"."
+    },
+    {
+        "name": "c",
+        "comment": "// It also sets the Content-Type as \"application/json\"."
+    },
+    {
+        "name": "c",
+        "comment": "// PureJSON, unlike JSON, does not replace special html characters with their unicode entities."
+    },
+    {
+        "name": "c",
+        "comment": "// It also sets the Content-Type as \"application/xml\"."
+    },
+    {
+        "name": "c",
+        "comment": "// YAML serializes the given struct as YAML into the response body."
+    },
+    {
+        "name": "c",
+        "comment": "// TOML serializes the given struct as TOML into the response body."
+    },
+    {
+        "name": "c",
+        "comment": "// ProtoBuf serializes the given struct as ProtoBuf into the response body."
+    },
+    {
+        "name": "c",
+        "comment": "// String writes the given string into the response body."
+    },
+    {
+        "name": "c",
+        "comment": "// Redirect returns an HTTP redirect to the specific location."
+    },
+    {
+        "name": "c",
+        "comment": "// Data writes some data into the body stream and updates the HTTP code."
+    },
+    {
+        "name": "c",
+        "comment": "// DataFromReader writes the specified reader into the body stream and updates the HTTP code."
+    },
+    {
+        "name": "c",
+        "comment": "// File writes the specified file into the body stream in an efficient way."
+    },
+    {
+        "name": "c",
+        "comment": "// FileFromFS writes the specified file from http.FileSystem into the body stream in an efficient way."
+    },
+    {
+        "name": "c",
+        "comment": "// On the client side, the file will typically be downloaded with the given filename"
+    },
+    {
+        "name": "c",
+        "comment": "// SSEvent writes a Server-Sent Event into the body stream."
+    },
+    {
+        "name": "c",
+        "comment": "// indicates \"Is client disconnected in middle of stream\""
+    },
+    {
+        "name": "c",
+        "comment": "// Negotiate calls different Render according to acceptable Accept format."
+    },
+    {
+        "name": "c",
+        "comment": "// NegotiateFormat returns an acceptable Accept format."
+    },
+    {
+        "name": "c",
+        "comment": "// SetAccepted sets Accept header data."
+    },
+    {
+        "name": "c",
+        "comment": "// hasRequestContext returns whether c.Request has Context and fallback."
+    },
+    {
+        "name": "c",
+        "comment": "// Deadline returns that there is no deadline (ok==false) when c.Request has no Context."
+    },
+    {
+        "name": "c",
+        "comment": "// Done returns nil (chan which will wait forever) when c.Request has no Context."
+    },
+    {
+        "name": "c",
+        "comment": "// Err returns nil when c.Request has no Context."
+    },
+    {
+        "name": "c",
+        "comment": "// the same key returns the same result."
+    },
+    {
+        "name": "init",
+        "comment": "//go:build appengine"
+    },
+    {
+        "name": "createMultipartRequest",
+        "comment": "// test that information is not leaked when reusing Contexts (using the Pool)"
+    },
+    {
+        "name": "TestContextHandlers",
+        "comment": "//nolint: errcheck"
+    },
+    {
+        "name": "TestContextSetGet",
+        "comment": "// current context and can be retrieved using Get."
+    },
+    {
+        "name": "TestContextInitQueryCache",
+        "comment": "// postform should not mess"
+    },
+    {
+        "name": "t",
+        "comment": "// explicit nil for readability"
+    },
+    {
+        "name": "value",
+        "comment": "// here c.Request == nil"
+    },
+    {
+        "name": "TestContextRenderJSON",
+        "comment": "// and special HTML characters are escaped"
+    },
+    {
+        "name": "TestContextRenderJSONP",
+        "comment": "// and Content-Type is set to application/javascript"
+    },
+    {
+        "name": "TestContextRenderJSONPWithoutCallback",
+        "comment": "// and Content-Type is set to application/json"
+    },
+    {
+        "name": "TestContextRenderNoContentJSON",
+        "comment": "// Tests that no JSON is rendered if code is 204"
+    },
+    {
+        "name": "TestContextRenderAPIJSON",
+        "comment": "// we change the content-type before"
+    },
+    {
+        "name": "TestContextRenderNoContentAPIJSON",
+        "comment": "// Tests that no Custom JSON is rendered if code is 204"
+    },
+    {
+        "name": "TestContextRenderIndentedJSON",
+        "comment": "// and Content-Type is set to application/json"
+    },
+    {
+        "name": "TestContextRenderNoContentIndentedJSON",
+        "comment": "// Tests that no Custom JSON is rendered if code is 204"
+    },
+    {
+        "name": "TestContextRenderSecureJSON",
+        "comment": "// and Content-Type is set to application/json"
+    },
+    {
+        "name": "TestContextRenderNoContentSecureJSON",
+        "comment": "// Tests that no Custom JSON is rendered if code is 204"
+    },
+    {
+        "name": "TestContextRenderPureJSON",
+        "comment": "// and special HTML characters are preserved"
+    },
+    {
+        "name": "TestContextRenderHTML",
+        "comment": "// and responds with Content-Type set to text/html"
+    },
+    {
+        "name": "_",
+        "comment": "// print debug warning log when Engine.trees > 0"
+    },
+    {
+        "name": "TestContextRenderNoContentHTML",
+        "comment": "// Tests that no HTML is rendered if code is 204"
+    },
+    {
+        "name": "TestContextRenderXML",
+        "comment": "// and Content-Type is set to application/xml"
+    },
+    {
+        "name": "TestContextRenderNoContentXML",
+        "comment": "// Tests that no XML is rendered if code is 204"
+    },
+    {
+        "name": "TestContextRenderString",
+        "comment": "// with Content-Type set to text/plain"
+    },
+    {
+        "name": "TestContextRenderNoContentString",
+        "comment": "// Tests that no String is rendered if code is 204"
+    },
+    {
+        "name": "TestContextRenderHTMLString",
+        "comment": "// with Content-Type set to text/html"
+    },
+    {
+        "name": "TestContextRenderNoContentHTMLString",
+        "comment": "// Tests that no HTML String is rendered if code is 204"
+    },
+    {
+        "name": "TestContextRenderData",
+        "comment": "// with specified MIME type"
+    },
+    {
+        "name": "TestContextRenderNoContentData",
+        "comment": "// Tests that no Custom Data is rendered if code is 204"
+    },
+    {
+        "name": "TestContextRenderFileFromFS",
+        "comment": "// else, Content-Type='text/x-go; charset=utf-8'"
+    },
+    {
+        "name": "TestContextRenderAttachment",
+        "comment": "// else, Content-Type='text/x-go; charset=utf-8'"
+    },
+    {
+        "name": "TestContextRenderYAML",
+        "comment": "// and Content-Type is set to application/yaml"
+    },
+    {
+        "name": "TestContextRenderTOML",
+        "comment": "// and Content-Type is set to application/toml"
+    },
+    {
+        "name": "TestContextRenderProtoBuf",
+        "comment": "// and we just use the example protobuf to check if the response is correct"
+    },
+    {
+        "name": "TestContextAbortWithStatus",
+        "comment": "// with specified MIME type"
+    },
+    {
+        "name": "recover",
+        "comment": "//nolint: errcheck"
+    },
+    {
+        "name": "TestContextTypedError",
+        "comment": "//nolint: errcheck"
+    },
+    {
+        "name": "TestContextAbortWithError",
+        "comment": "//nolint: errcheck"
+    },
+    {
+        "name": "TestContextClientIP",
+        "comment": "//nolint: errcheck"
+    },
+    {
+        "name": "resetContextForClientIPTests",
+        "comment": "// no port"
+    },
+    {
+        "name": "TestContextBindWithXML",
+        "comment": "// set fake content-type"
+    },
+    {
+        "name": "TestContextBindPlain",
+        "comment": "// set fake content-type"
+    },
+    {
+        "name": "TestContextBindHeader",
+        "comment": "// []byte"
+    },
+    {
+        "name": "TestContextBindWithTOML",
+        "comment": "// set fake content-type"
+    },
+    {
+        "name": "TestContextBadAutoBind",
+        "comment": "// set fake content-type"
+    },
+    {
+        "name": "TestContextShouldBindWithXML",
+        "comment": "// set fake content-type"
+    },
+    {
+        "name": "TestContextShouldBindPlain",
+        "comment": "// set fake content-type"
+    },
+    {
+        "name": "TestContextShouldBindHeader",
+        "comment": "// []byte"
+    },
+    {
+        "name": "TestContextShouldBindWithTOML",
+        "comment": "// set fake content-type"
+    },
+    {
+        "name": "TestContextBadAutoShouldBind",
+        "comment": "// set fake content-type"
+    },
+    {
+        "name": "TestContextShouldBindBodyWithJSON",
+        "comment": "// not typeA but typeB."
+    },
+    {
+        "name": "TestContextShouldBindBodyWithTOML",
+        "comment": "// YAML belongs to a super collection of JSON, so JSON can be parsed by YAML"
+    },
+    {
+        "name": "TestGetRequestHeaderValue",
+        "comment": "// Normal request, no websocket required."
+    },
+    {
+        "name": "TestContextWithKeysMutex",
+        "comment": "// First assert must be executed after the second request"
+    },
+    {
+        "name": "TestContextWithFallbackDeadlineFromRequestContext",
+        "comment": "//nolint:staticcheck"
+    },
+    {
+        "name": "TestContextWithFallbackDoneFromRequestContext",
+        "comment": "// enable ContextWithFallback feature flag"
+    },
+    {
+        "name": "TestContextWithFallbackErrFromRequestContext",
+        "comment": "// enable ContextWithFallback feature flag"
+    },
+    {
+        "name": "TestContextWithFallbackValueFromRequestContext",
+        "comment": "// enable ContextWithFallback feature flag"
+    },
+    {
+        "name": "Context",
+        "comment": "// enable ContextWithFallback feature flag"
+    },
+    {
+        "name": "Context",
+        "comment": "// enable ContextWithFallback feature flag"
+    },
+    {
+        "name": "Context",
+        "comment": "// enable ContextWithFallback feature flag"
+    },
+    {
+        "name": "t",
+        "comment": "// enable ContextWithFallback feature flag"
+    },
+    {
+        "name": "wg",
+        "comment": "// start async goroutine for calling srv"
+    },
+    {
+        "name": "s",
+        "comment": "// ensure request is done"
+    },
+    {
+        "name": "IsDebugging",
+        "comment": "// Use SetMode(gin.ReleaseMode) to disable debug mode."
+    },
+    {
+        "name": "httpMethod",
+        "comment": "// DebugPrintRouteFunc indicates debug log output format."
+    },
+    {
+        "name": "format",
+        "comment": "// DebugPrintFunc indicates debug log output format."
+    },
+    {
+        "name": "TestIsDebugging",
+        "comment": "// func debugPrint(format string, values ...any) {"
+    },
+    {
+        "name": "c",
+        "comment": "// Deprecated: Use MustBindWith or ShouldBindWith."
+    },
+    {
+        "name": "TestBindWith",
+        "comment": "// license that can be found in the LICENSE file."
+    },
+    {
+        "name": "msg",
+        "comment": "// SetType sets the error's type."
+    },
+    {
+        "name": "msg",
+        "comment": "// SetMeta sets the error's meta data."
+    },
+    {
+        "name": "msg",
+        "comment": "// JSON creates a properly formatted JSON"
+    },
+    {
+        "name": "msg",
+        "comment": "// MarshalJSON implements the json.Marshaller interface."
+    },
+    {
+        "name": "msg",
+        "comment": "// Error implements the error interface."
+    },
+    {
+        "name": "msg",
+        "comment": "// IsType judges one error."
+    },
+    {
+        "name": "msg",
+        "comment": "// Unwrap returns the wrapped error, to allow interoperability with errors.Is(), errors.As() and errors.Unwrap()"
+    },
+    {
+        "name": "a",
+        "comment": "// ie ByType(gin.ErrorTypePublic) returns a slice of errors with type=ErrorTypePublic."
+    },
+    {
+        "name": "a",
+        "comment": "// Shortcut for errors[len(errors)-1]."
+    },
+    {
+        "name": "a",
+        "comment": "//\tc.Errors.Errors() // == []string{\"first\", \"second\", \"third\"}"
+    },
+    {
+        "name": "a",
+        "comment": "// MarshalJSON implements the json.Marshaller interface."
+    },
+    {
+        "name": "TestError",
+        "comment": "// license that can be found in the LICENSE file."
+    },
+    {
+        "name": "TestErrorSlice",
+        "comment": "//nolint: errcheck"
+    },
+    {
+        "name": "TestErrorUnwrap",
+        "comment": "// \"errors.Is()\" and \"errors.As()\" have been added to the standard library in go 1.13."
+    },
+    {
+        "name": "o",
+        "comment": "// Open passes `Open` to the upstream implementation without `Readdir` functionality."
+    },
+    {
+        "name": "n",
+        "comment": "// Readdir overrides the http.File default implementation and always returns nil."
+    },
+    {
+        "name": "Dir",
+        "comment": "// otherwise it returns a filesystem that prevents http.FileServer() to list the directory files."
+    },
+    {
+        "name": "Context",
+        "comment": "// HandlerFunc defines the handler used by gin middleware as return value."
+    },
+    {
+        "name": "Engine",
+        "comment": "// OptionFunc defines the function to change the default configuration"
+    },
+    {
+        "name": "c",
+        "comment": "// Last returns the last handler in the chain. i.e. the last handler is the main one."
+    },
+    {
+        "name": "New",
+        "comment": "// - UnescapePathValues:     true"
+    },
+    {
+        "name": "Default",
+        "comment": "// Default returns an Engine instance with the Logger and Recovery middleware already attached."
+    },
+    {
+        "name": "engine",
+        "comment": "// Delims sets template left and right delims and returns an Engine instance."
+    },
+    {
+        "name": "engine",
+        "comment": "// SecureJsonPrefix sets the secureJSONPrefix used in Context.SecureJSON."
+    },
+    {
+        "name": "engine",
+        "comment": "// and associates the result with HTML renderer."
+    },
+    {
+        "name": "engine",
+        "comment": "// and associates the result with HTML renderer."
+    },
+    {
+        "name": "engine",
+        "comment": "// SetHTMLTemplate associate a template with HTML renderer."
+    },
+    {
+        "name": "engine",
+        "comment": "// SetFuncMap sets the FuncMap used for template.FuncMap."
+    },
+    {
+        "name": "engine",
+        "comment": "// NoRoute adds handlers for NoRoute. It returns a 404 code by default."
+    },
+    {
+        "name": "engine",
+        "comment": "// NoMethod sets the handlers called when Engine.HandleMethodNotAllowed = true."
+    },
+    {
+        "name": "engine",
+        "comment": "// For example, this is the right place for a logger or error management middleware."
+    },
+    {
+        "name": "engine",
+        "comment": "// With returns a Engine with the configuration set in the OptionFunc."
+    },
+    {
+        "name": "engine",
+        "comment": "// the http method, path and the handler name."
+    },
+    {
+        "name": "engine",
+        "comment": "// return the remote address directly."
+    },
+    {
+        "name": "engine",
+        "comment": "// isUnsafeTrustedProxies checks if Engine.trustedCIDRs contains all IPs, it's not safe if it has (returns true)"
+    },
+    {
+        "name": "engine",
+        "comment": "// parseTrustedProxies parse Engine.trustedProxies to Engine.trustedCIDRs"
+    },
+    {
+        "name": "engine",
+        "comment": "// isTrustedProxy will check whether the IP address is included in the trusted list according to Engine.trustedCIDRs"
+    },
+    {
+        "name": "engine",
+        "comment": "// validateHeader will parse X-Forwarded-For header and return the trusted client IP address"
+    },
+    {
+        "name": "updateRouteTree",
+        "comment": "// updateRouteTree do update to the route tree recursively"
+    },
+    {
+        "name": "engine",
+        "comment": "// updateRouteTrees do update to the route trees"
+    },
+    {
+        "name": "parseIP",
+        "comment": "// minimum byte representation or nil if input is invalid."
+    },
+    {
+        "name": "engine",
+        "comment": "// Note: this method will block the calling goroutine indefinitely unless an error happens."
+    },
+    {
+        "name": "engine",
+        "comment": "// Note: this method will block the calling goroutine indefinitely unless an error happens."
+    },
+    {
+        "name": "engine",
+        "comment": "// Note: this method will block the calling goroutine indefinitely unless an error happens."
+    },
+    {
+        "name": "engine",
+        "comment": "// Note: this method will block the calling goroutine indefinitely unless an error happens."
+    },
+    {
+        "name": "engine",
+        "comment": "// Note: this method will block the calling goroutine indefinitely unless an error happens."
+    },
+    {
+        "name": "engine",
+        "comment": "// through the specified net.Listener"
+    },
+    {
+        "name": "engine",
+        "comment": "// ServeHTTP conforms to the http.Handler interface."
+    },
+    {
+        "name": "engine",
+        "comment": "// Disclaimer: You can loop yourself to deal with this, use wisely."
+    },
+    {
+        "name": "serveError",
+        "comment": "// containing a list of the target resource's currently supported methods."
+    },
+    {
+        "name": "testRequest",
+        "comment": "// params[2]=response body (custom compare content)  default:\"it worked\""
+    },
+    {
+        "name": "TestBadTrustedCIDRs",
+        "comment": "// otherwise the main thread will complete"
+    },
+    {
+        "name": "TestRunTLS",
+        "comment": "/* legacy tests\nfunc TestBadTrustedCIDRsForRun(t *testing.T) {\n\tos.Setenv(\"PORT\", \"\")\n\trouter := New()\n\trouter.TrustedProxies = []string{\"hello/world\"}\n\tassert.Error(t, router.Run(\":8080\"))\n}\n\nfunc TestBadTrustedCIDRsForRunUnix(t *testing.T) {\n\trouter := New()\n\trouter.TrustedProxies = []string{\"hello/world\"}\n\n\tunixTestSocket := filepath.Join(os.TempDir(), \"unix_unit_test\")\n\n\tdefer os.Remove(unixTestSocket)\n\n\tgo func() {\n\t\trouter.GET(\"/example\", func(c *Context) { c.String(http.StatusOK, \"it worked\") })\n\t\tassert.Error(t, router.RunUnix(unixTestSocket))\n\t}()\n\t// have to wait for the goroutine to start and run the server\n\t// otherwise the main thread will complete\n\ttime.Sleep(5 * time.Millisecond)\n}\n\nfunc TestBadTrustedCIDRsForRunFd(t *testing.T) {\n\trouter := New()\n\trouter.TrustedProxies = []string{\"hello/world\"}\n\n\taddr, err := net.ResolveTCPAddr(\"tcp\", \"localhost:0\")\n\tassert.NoError(t, err)\n\tlistener, err := net.ListenTCP(\"tcp\", addr)\n\tassert.NoError(t, err)\n\tsocketFile, err := listener.File()\n\tassert.NoError(t, err)\n\n\tgo func() {\n\t\trouter.GET(\"/example\", func(c *Context) { c.String(http.StatusOK, \"it worked\") })\n\t\tassert.Error(t, router.RunFd(int(socketFile.Fd())))\n\t}()\n\t// have to wait for the goroutine to start and run the server\n\t// otherwise the main thread will complete\n\ttime.Sleep(5 * time.Millisecond)\n}\n\nfunc TestBadTrustedCIDRsForRunListener(t *testing.T) {\n\trouter := New()\n\trouter.TrustedProxies = []string{\"hello/world\"}\n\n\taddr, err := net.ResolveTCPAddr(\"tcp\", \"localhost:0\")\n\tassert.NoError(t, err)\n\tlistener, err := net.ListenTCP(\"tcp\", addr)\n\tassert.NoError(t, err)\n\tgo func() {\n\t\trouter.GET(\"/example\", func(c *Context) { c.String(http.StatusOK, \"it worked\") })\n\t\tassert.Error(t, router.RunListener(listener))\n\t}()\n\t// have to wait for the goroutine to start and run the server\n\t// otherwise the main thread will complete\n\ttime.Sleep(5 * time.Millisecond)\n}\n\nfunc TestBadTrustedCIDRsForRunTLS(t *testing.T) {\n\tos.Setenv(\"PORT\", \"\")\n\trouter := New()\n\trouter.TrustedProxies = []string{\"hello/world\"}\n\tassert.Error(t, router.RunTLS(\":8080\", \"./testdata/certificate/cert.pem\", \"./testdata/certificate/key.pem\"))\n}\n*/"
+    },
+    {
+        "name": "TestPusher",
+        "comment": "// otherwise the main thread will complete"
+    },
+    {
+        "name": "TestRunEmptyWithEnv",
+        "comment": "// otherwise the main thread will complete"
+    },
+    {
+        "name": "TestRunTooMuchParams",
+        "comment": "// otherwise the main thread will complete"
+    },
+    {
+        "name": "TestUnixSocket",
+        "comment": "// otherwise the main thread will complete"
+    },
+    {
+        "name": "TestBadUnixSocket",
+        "comment": "// otherwise the main thread will complete"
+    },
+    {
+        "name": "TestFileDescriptor",
+        "comment": "// otherwise the main thread will complete"
+    },
+    {
+        "name": "router",
+        "comment": "// not supported by windows, it is unimplemented now"
+    },
+    {
+        "name": "TestBadFileDescriptor",
+        "comment": "// otherwise the main thread will complete"
+    },
+    {
+        "name": "TestBadListener",
+        "comment": "// otherwise the main thread will complete"
+    },
+    {
+        "name": "testGetRequestHandler",
+        "comment": "// }"
+    },
+    {
+        "name": "isWindows",
+        "comment": "// 404 not found"
+    },
+    {
+        "name": "formatAsDate",
+        "comment": "// license that can be found in the LICENSE file."
+    },
+    {
+        "name": "TestLoadHTMLGlobFromFuncMap",
+        "comment": "// Use InsecureSkipVerify for avoiding `x509: certificate signed by unknown authority` error"
+    },
+    {
+        "name": "TestLoadHTMLFilesFuncMap",
+        "comment": "// Use InsecureSkipVerify for avoiding `x509: certificate signed by unknown authority` error"
+    },
+    {
+        "name": "TestPrepareTrustedCIRDsWith",
+        "comment": "// include 0 value"
+    },
+    {
+        "name": "parseCIDR",
+        "comment": "// nil value"
+    },
+    {
+        "name": "TestShouldBindUri",
+        "comment": "//{http.MethodPatch, \"/user/keys/:id\"},"
+    },
+    {
+        "name": "readWriteKeys",
+        "comment": "// Sending a copy of the Context to two separate routines"
+    },
+    {
+        "name": "exampleFromPath",
+        "comment": "// TEST"
+    },
+    {
+        "name": "BenchmarkParallelGithubDefault",
+        "comment": "// Each goroutine has its own bytes.Buffer."
+    },
+    {
+        "name": "c",
+        "comment": "// Skipper is a function to skip logs based on provided Context"
+    },
+    {
+        "name": "params",
+        "comment": "// LogFormatter gives the signature of the formatter function passed to LoggerWithFormatter"
+    },
+    {
+        "name": "p",
+        "comment": "// StatusCodeColor is the ANSI color for appropriately logging http status code to a terminal."
+    },
+    {
+        "name": "p",
+        "comment": "// MethodColor is the ANSI color for appropriately logging http method to a terminal."
+    },
+    {
+        "name": "p",
+        "comment": "// ResetColor resets all escape attributes."
+    },
+    {
+        "name": "p",
+        "comment": "// IsOutputColor indicates whether can colors be outputted to the log."
+    },
+    {
+        "name": "param",
+        "comment": "// defaultLogFormatter is the default log format function Logger middleware uses."
+    },
+    {
+        "name": "DisableConsoleColor",
+        "comment": "// DisableConsoleColor disables color output in the console."
+    },
+    {
+        "name": "ForceConsoleColor",
+        "comment": "// ForceConsoleColor force color output in the console."
+    },
+    {
+        "name": "ErrorLogger",
+        "comment": "// ErrorLogger returns a HandlerFunc for any error type."
+    },
+    {
+        "name": "ErrorLoggerT",
+        "comment": "// ErrorLoggerT returns a HandlerFunc for a given error type."
+    },
+    {
+        "name": "Logger",
+        "comment": "// By default, gin.DefaultWriter = os.Stdout."
+    },
+    {
+        "name": "LoggerWithFormatter",
+        "comment": "// LoggerWithFormatter instance a Logger middleware with the specified log format function."
+    },
+    {
+        "name": "LoggerWithWriter",
+        "comment": "// Example: os.Stdout, a file opened in write mode, a socket..."
+    },
+    {
+        "name": "LoggerWithConfig",
+        "comment": "// LoggerWithConfig instance a Logger middleware with config."
+    },
+    {
+        "name": "init",
+        "comment": "// license that can be found in the LICENSE file."
+    },
+    {
+        "name": "TestLoggerWithConfig",
+        "comment": "// than individual functions.  Im not sure where these should go."
+    },
+    {
+        "name": "TestLoggerWithFormatter",
+        "comment": "// than individual functions.  Im not sure where these should go."
+    },
+    {
+        "name": "TestLoggerWithConfigFormatting",
+        "comment": "// output test"
+    },
+    {
+        "name": "c",
+        "comment": "// for assert test"
+    },
+    {
+        "name": "TestDefaultLogFormatter",
+        "comment": "// LogFormatterParams test"
+    },
+    {
+        "name": "TestErrorLogger",
+        "comment": "// reset console color mode."
+    },
+    {
+        "name": "c",
+        "comment": "//nolint: errcheck"
+    },
+    {
+        "name": "c",
+        "comment": "//nolint: errcheck"
+    },
+    {
+        "name": "TestLoggerWithWriterSkippingPaths",
+        "comment": "//nolint: errcheck"
+    },
+    {
+        "name": "TestForceConsoleColor",
+        "comment": "// reset console color mode."
+    },
+    {
+        "name": "TestMiddlewareGeneralCase",
+        "comment": "// license that can be found in the LICENSE file."
+    },
+    {
+        "name": "TestMiddlewareNoRoute",
+        "comment": "// TEST"
+    },
+    {
+        "name": "TestMiddlewareNoMethodEnabled",
+        "comment": "// TEST"
+    },
+    {
+        "name": "TestMiddlewareNoMethodDisabled",
+        "comment": "// TEST"
+    },
+    {
+        "name": "c",
+        "comment": "// NoMethod disabled"
+    },
+    {
+        "name": "TestMiddlewareAbort",
+        "comment": "// TEST"
+    },
+    {
+        "name": "TestMiddlewareAbortHandlersChainAndNext",
+        "comment": "// TEST"
+    },
+    {
+        "name": "TestMiddlewareFailHandlersChain",
+        "comment": "// as well as Abort"
+    },
+    {
+        "name": "context",
+        "comment": "// SETUP"
+    },
+    {
+        "name": "context",
+        "comment": "//nolint: errcheck"
+    },
+    {
+        "name": "TestMiddlewareWrite",
+        "comment": "// TEST"
+    },
+    {
+        "name": "init",
+        "comment": "// DefaultErrorWriter is the default io.Writer used by Gin to debug errors"
+    },
+    {
+        "name": "SetMode",
+        "comment": "// SetMode sets gin mode according to input string."
+    },
+    {
+        "name": "DisableBindValidation",
+        "comment": "// DisableBindValidation closes the default validator."
+    },
+    {
+        "name": "EnableJsonDecoderUseNumber",
+        "comment": "// call the UseNumber method on the JSON Decoder instance."
+    },
+    {
+        "name": "EnableJsonDecoderDisallowUnknownFields",
+        "comment": "// call the DisallowUnknownFields method on the JSON Decoder instance."
+    },
+    {
+        "name": "Mode",
+        "comment": "// Mode returns current gin mode."
+    },
+    {
+        "name": "init",
+        "comment": "// license that can be found in the LICENSE file."
+    },
+    {
+        "name": "cleanPath",
+        "comment": "// If the result of this process is an empty string, \"/\" is returned."
+    },
+    {
+        "name": "bufApp",
+        "comment": "// Calls to this function get inlined."
+    },
+    {
+        "name": "TestPathClean",
+        "comment": "// Combinations"
+    },
+    {
+        "name": "c",
+        "comment": "// RecoveryFunc defines the function passable to CustomRecovery."
+    },
+    {
+        "name": "Recovery",
+        "comment": "// Recovery returns a middleware that recovers from any panics and writes a 500 if there was one."
+    },
+    {
+        "name": "CustomRecovery",
+        "comment": "// CustomRecovery returns a middleware that recovers from any panics and calls the provided handle func to handle it."
+    },
+    {
+        "name": "RecoveryWithWriter",
+        "comment": "// RecoveryWithWriter returns a middleware for a given writer that recovers from any panics and writes a 500 if there was one."
+    },
+    {
+        "name": "CustomRecoveryWithWriter",
+        "comment": "// CustomRecoveryWithWriter returns a middleware for a given writer that recovers from any panics and calls the provided handle func to handle it."
+    },
+    {
+        "name": "defaultHandleRecovery",
+        "comment": "//nolint: errcheck"
+    },
+    {
+        "name": "stack",
+        "comment": "// stack returns a nicely formatted stack frame, skipping skip frames."
+    },
+    {
+        "name": "source",
+        "comment": "// source returns a space-trimmed slice of the n'th line."
+    },
+    {
+        "name": "function",
+        "comment": "// function returns, if possible, the name of the function containing the PC."
+    },
+    {
+        "name": "timeFormat",
+        "comment": "// timeFormat returns a customized time string for logger."
+    },
+    {
+        "name": "TestPanicClean",
+        "comment": "// license that can be found in the LICENSE file."
+    },
+    {
+        "name": "TestPanicInHandler",
+        "comment": "// TestPanicInHandler assert that panic has been recovered."
+    },
+    {
+        "name": "TestPanicWithAbort",
+        "comment": "// TestPanicWithAbort assert that panic has been recovered even if context.Abort was used."
+    },
+    {
+        "name": "TestSource",
+        "comment": "// TEST"
+    },
+    {
+        "name": "TestPanicWithBrokenPipe",
+        "comment": "// writing responses to broken pipes"
+    },
+    {
+        "name": "TestCustomRecoveryWithWriter",
+        "comment": "// TEST"
+    },
+    {
+        "name": "TestCustomRecovery",
+        "comment": "// TEST"
+    },
+    {
+        "name": "TestRecoveryWithWriterWithCustomRecovery",
+        "comment": "// TEST"
+    },
+    {
+        "name": "w",
+        "comment": "// Pusher get the http.Pusher for server push"
+    },
+    {
+        "name": "w",
+        "comment": "// Hijack implements the http.Hijacker interface."
+    },
+    {
+        "name": "w",
+        "comment": "// CloseNotify implements the http.CloseNotifier interface."
+    },
+    {
+        "name": "w",
+        "comment": "// Flush implements the http.Flusher interface."
+    },
+    {
+        "name": "init",
+        "comment": "// func (w *responseWriter) Flush() {"
+    },
+    {
+        "name": "TestResponseWriterStatusCode",
+        "comment": "// should return 500"
+    },
+    {
+        "name": "m",
+        "comment": "// mockPusherResponseWriter is an http.ResponseWriter that implements http.Pusher."
+    },
+    {
+        "name": "TestPusherWithPusher",
+        "comment": "// nonPusherResponseWriter is an http.ResponseWriter that does not implement http.Pusher."
+    },
+    {
+        "name": "group",
+        "comment": "// Use adds middleware to the group, see example code in GitHub."
+    },
+    {
+        "name": "group",
+        "comment": "// For example, all the routes that use a common middleware for authorization could be grouped."
+    },
+    {
+        "name": "group",
+        "comment": "// For example, if v := router.Group(\"/rest/n/v1/api\"), v.BasePath() is \"/rest/n/v1/api\"."
+    },
+    {
+        "name": "group",
+        "comment": "// communication with a proxy)."
+    },
+    {
+        "name": "group",
+        "comment": "// POST is a shortcut for router.Handle(\"POST\", path, handlers)."
+    },
+    {
+        "name": "group",
+        "comment": "// GET is a shortcut for router.Handle(\"GET\", path, handlers)."
+    },
+    {
+        "name": "group",
+        "comment": "// DELETE is a shortcut for router.Handle(\"DELETE\", path, handlers)."
+    },
+    {
+        "name": "group",
+        "comment": "// PATCH is a shortcut for router.Handle(\"PATCH\", path, handlers)."
+    },
+    {
+        "name": "group",
+        "comment": "// PUT is a shortcut for router.Handle(\"PUT\", path, handlers)."
+    },
+    {
+        "name": "group",
+        "comment": "// OPTIONS is a shortcut for router.Handle(\"OPTIONS\", path, handlers)."
+    },
+    {
+        "name": "group",
+        "comment": "// HEAD is a shortcut for router.Handle(\"HEAD\", path, handlers)."
+    },
+    {
+        "name": "group",
+        "comment": "// GET, POST, PUT, PATCH, HEAD, OPTIONS, DELETE, CONNECT, TRACE."
+    },
+    {
+        "name": "group",
+        "comment": "// Match registers a route that matches the specified methods that you declared."
+    },
+    {
+        "name": "group",
+        "comment": "// router.StaticFile(\"favicon.ico\", \"./resources/favicon.ico\")"
+    },
+    {
+        "name": "group",
+        "comment": "// Gin by default uses: gin.Dir()"
+    },
+    {
+        "name": "group",
+        "comment": "//\trouter.Static(\"/static\", \"/var/www\")"
+    },
+    {
+        "name": "group",
+        "comment": "// Gin by default uses: gin.Dir()"
+    },
+    {
+        "name": "group",
+        "comment": "// Register GET and HEAD handlers"
+    },
+    {
+        "name": "group",
+        "comment": "// Reset index"
+    },
+    {
+        "name": "init",
+        "comment": "// license that can be found in the LICENSE file."
+    },
+    {
+        "name": "PerformRequest",
+        "comment": "// PerformRequest for testing gin router."
+    },
+    {
+        "name": "testRouteNotOK",
+        "comment": "// TestSingleRouteOK tests that POST route is correctly invoked."
+    },
+    {
+        "name": "testRouteNotOK2",
+        "comment": "// TestSingleRouteOK tests that POST route is correctly invoked."
+    },
+    {
+        "name": "TestRouteParamsByName",
+        "comment": "// TestContextParamsGet tests that a parameter can be parsed from the URL."
+    },
+    {
+        "name": "TestRouteParamsByNameWithExtraSlash",
+        "comment": "// TestContextParamsGet tests that a parameter can be parsed from the URL even with extra slashes."
+    },
+    {
+        "name": "TestRouteParamsNotEmpty",
+        "comment": "// initialisation (which happened in a previous requests)."
+    },
+    {
+        "name": "TestRouteStaticFile",
+        "comment": "// TestHandleStaticFile - ensure the static file handles properly"
+    },
+    {
+        "name": "TestRouteStaticFileFS",
+        "comment": "// TestHandleStaticFile - ensure the static file handles properly"
+    },
+    {
+        "name": "TestRouteStaticListingDir",
+        "comment": "// TestHandleStaticDir - ensure the root/sub dir handles properly"
+    },
+    {
+        "name": "TestRouteStaticNoListing",
+        "comment": "// TestHandleHeadToDir - ensure the root/sub dir handles properly"
+    },
+    {
+        "name": "TestRouteNotAllowedEnabled",
+        "comment": "// else, Content-Type='text/x-go; charset=utf-8'"
+    },
+    {
+        "name": "_",
+        "comment": "// add one methodTree to trees"
+    },
+    {
+        "name": "TestRouterNotFound",
+        "comment": "// NotFound"
+    },
+    {
+        "name": "c",
+        "comment": "// Test custom not found handler"
+    },
+    {
+        "name": "c",
+        "comment": "// Test other method than GET (want 307 instead of 301)"
+    },
+    {
+        "name": "c",
+        "comment": "// Test special case where no node for the prefix \"/\" exists"
+    },
+    {
+        "name": "c",
+        "comment": "// Reproduction test for the bug of issue #2843"
+    },
+    {
+        "name": "TestMiddlewareCalledOnceByRouterStaticFSNotFound",
+        "comment": "// Reproduction test for the bug of issue #1805"
+    },
+    {
+        "name": "c",
+        "comment": "// Middleware must be called just only once by per request."
+    },
+    {
+        "name": "TestRouteRawPath",
+        "comment": "// Second access"
+    },
+    {
+        "name": "c",
+        "comment": "// Test routes"
+    },
+    {
+        "name": "c",
+        "comment": "// Test not found"
+    },
+    {
+        "name": "TestEngineHandleMethodNotAllowedCornerCase",
+        "comment": "// For not found routes full path is empty"
+    },
+    {
+        "name": "CreateTestContext",
+        "comment": "// CreateTestContext returns a fresh engine and context for testing purposes"
+    },
+    {
+        "name": "CreateTestContextOnly",
+        "comment": "// CreateTestContextOnly returns a fresh context base on the engine for testing purposes"
+    },
+    {
+        "name": "ps",
+        "comment": "// If no matching Param is found, an empty string is returned and a boolean false ."
+    },
+    {
+        "name": "ps",
+        "comment": "// If no matching Param is found, an empty string is returned."
+    },
+    {
+        "name": "n",
+        "comment": "// addChild will add a child node, keeping wildcardChild at the end"
+    },
+    {
+        "name": "n",
+        "comment": "// Increments priority of the given child and reorders if necessary"
+    },
+    {
+        "name": "n",
+        "comment": "// Not concurrency-safe!"
+    },
+    {
+        "name": "findWildcard",
+        "comment": "// Returns -1 as index, if no wildcard was found."
+    },
+    {
+        "name": "n",
+        "comment": "// Find end and check for invalid characters"
+    },
+    {
+        "name": "n",
+        "comment": "// given path."
+    },
+    {
+        "name": "n",
+        "comment": "// was successful."
+    },
+    {
+        "name": "shiftNRuneBytes",
+        "comment": "// Shift bytes in array by n bytes left"
+    },
+    {
+        "name": "n",
+        "comment": "// Recursive case-insensitive lookup function used by n.findCaseInsensitivePath"
+    },
+    {
+        "name": "fakeHandler",
+        "comment": "// Used as a workaround since we can't compare functions or their addresses"
+    },
+    {
+        "name": "TestTreeWildcard",
+        "comment": "// no matching child"
+    },
+    {
+        "name": "TestUnescapeParameters",
+        "comment": "// fix PR: https://github.com/gin-gonic/gin/pull/2796"
+    },
+    {
+        "name": "tree",
+        "comment": "// Add again"
+    },
+    {
+        "name": "TestEmptyWildcardName",
+        "comment": "//printChildren(tree, \"\")"
+    },
+    {
+        "name": "TestTreeTrailingSlashRedirect",
+        "comment": "/*func TestTreeDuplicateWildcard(t *testing.T) {\n\ttree := &node{}\n\troutes := [...]string{\n\t\t\"/:id/:name/:id\",\n\t}\n\tfor _, route := range routes {\n\t\t...\n\t}\n}*/"
+    },
+    {
+        "name": "tree",
+        "comment": "// 4 byte"
+    },
+    {
+        "name": "TestTreeInvalidNodeType",
+        "comment": "// test needs a trailingSlash fix. It must not be found!"
+    },
+    {
+        "name": "tree",
+        "comment": "// normal lookup"
+    },
+    {
+        "name": "tree",
+        "comment": "// case-insensitive lookup"
+    },
+    {
+        "name": "TestTreeExpandParamsCapacity",
+        "comment": "// try to trigger slice bounds out of range with capacity 0"
+    },
+    {
+        "name": "tree",
+        "comment": "// panic which threw by 'addRoute' function."
+    },
+    {
+        "name": "Bind",
+        "comment": "// Bind is a helper function for given interface object and returns a Gin middleware."
+    },
+    {
+        "name": "WrapF",
+        "comment": "// WrapF is a helper function for wrapping http.HandlerFunc and returns a Gin middleware."
+    },
+    {
+        "name": "WrapH",
+        "comment": "// WrapH is a helper function for wrapping http.Handler and returns a Gin middleware."
+    },
+    {
+        "name": "h",
+        "comment": "// MarshalXML allows type H to be used with xml.Marshal."
+    },
+    {
+        "name": "isASCII",
+        "comment": "// https://stackoverflow.com/questions/53069040/checking-a-string-contains-only-ascii-characters"
+    },
+    {
+        "name": "init",
+        "comment": "// license that can be found in the LICENSE file."
+    },
+    {
+        "name": "TestJoinPaths",
+        "comment": "// this empty function is used by TestFunctionName()"
+    },
+    {
+        "name": "init",
+        "comment": "// allow user to override go executable by running as GOEXE=xxx make ... on unix-like systems"
+    },
+    {
+        "name": "runWith",
+        "comment": "// The default is \"auto\"."
+    },
+    {
+        "name": "Hugo",
+        "comment": "// Build hugo binary"
+    },
+    {
+        "name": "HugoRace",
+        "comment": "// Build hugo binary with race detector enabled"
+    },
+    {
+        "name": "Install",
+        "comment": "// Install hugo binary"
+    },
+    {
+        "name": "Uninstall",
+        "comment": "// Uninstall hugo binary"
+    },
+    {
+        "name": "Generate",
+        "comment": "// Generate autogen packages"
+    },
+    {
+        "name": "GenDocsHelper",
+        "comment": "// Generate docs helper"
+    },
+    {
+        "name": "HugoNoGitInfo",
+        "comment": "// Build hugo without git info"
+    },
+    {
+        "name": "Docker",
+        "comment": "// Build hugo Docker container"
+    },
+    {
+        "name": "Check",
+        "comment": "// Run tests and linters"
+    },
+    {
+        "name": "testGoFlags",
+        "comment": "// causes memory issues in CI."
+    },
+    {
+        "name": "Test386",
+        "comment": "// Note that we don't run with the extended tag. Currently not supported in 32 bit."
+    },
+    {
+        "name": "Test",
+        "comment": "// Run tests"
+    },
+    {
+        "name": "TestRace",
+        "comment": "// Run tests with race detector"
+    },
+    {
+        "name": "Fmt",
+        "comment": "// Run gofmt linter"
+    },
+    {
+        "name": "Lint",
+        "comment": "// Run golint linter"
+    },
+    {
+        "name": "Vet",
+        "comment": "// Run go vet linter"
+    },
+    {
+        "name": "TestCoverHTML",
+        "comment": "// Generate test coverage report"
+    },
+    {
+        "name": "argsToStrings",
+        "comment": "// To build without `hugo deploy` for smaller binary, use HUGO_BUILD_TAGS=nodeploy"
+    },
+    {
+        "name": "main",
+        "comment": "// limitations under the License."
+    },
+    {
+        "name": "TestCommands",
+        "comment": "// limitations under the License."
+    },
+    {
+        "name": "TestUnfinished",
+        "comment": "// Also see the watch_testscripts.sh script."
+    },
+    {
+        "name": "TestMain",
+        "comment": "// p.UpdateScripts = true"
+    },
+    {
+        "name": "err",
+        "comment": "// The main program."
+    },
+    {
+        "name": "ts",
+        "comment": "// log prints to stderr."
+    },
+    {
+        "name": "ts",
+        "comment": "// dostounix converts \\r\\n to \\n."
+    },
+    {
+        "name": "ts",
+        "comment": "// cat prints a file to stdout."
+    },
+    {
+        "name": "ts",
+        "comment": "// sleep sleeps for a second."
+    },
+    {
+        "name": "ts",
+        "comment": "// ls lists a directory to stdout."
+    },
+    {
+        "name": "ts",
+        "comment": "// append appends to a file with a leading newline."
+    },
+    {
+        "name": "ts",
+        "comment": "// replace replaces a string in a file."
+    },
+    {
+        "name": "ts",
+        "comment": "// httpget checks that a HTTP resource's body matches (if it compiles as a regexp) or contains all of the strings given as arguments."
+    },
+    {
+        "name": "ts",
+        "comment": "// checkfile checks that a file exists and is not empty."
+    },
+    {
+        "name": "ts",
+        "comment": "// checkfilecount checks that the number of files in a directory is equal to the given count."
+    },
+    {
+        "name": "ts",
+        "comment": "// waitServer waits for the .ready file to be created by the server."
+    },
+    {
+        "name": "ts",
+        "comment": "// Read the .ready file's JSON into info."
+    },
+    {
+        "name": "testSetupFunc",
+        "comment": "// Allow some time for the server to shut down."
+    },
+    {
+        "name": "initTargets",
+        "comment": "// .exe will be added automatically for Windows builds"
+    },
+    {
+        "name": "main",
+        "comment": "// and \"extra\" dirs."
+    },
+    {
+        "name": "runCommand",
+        "comment": "// syncthing\" etc."
+    },
+    {
+        "name": "bench",
+        "comment": "// , \"windows\": # See https://github.com/golang/go/issues/27089"
+    },
+    {
+        "name": "build",
+        "comment": "// the file icon, version, etc."
+    },
+    {
+        "name": "setBuildEnvVars",
+        "comment": "// the file icon, version, etc."
+    },
+    {
+        "name": "buildTar",
+        "comment": "// https://github.com/go-delve/delve/issues/79"
+    },
+    {
+        "name": "createPostInstScript",
+        "comment": "// than just 0.14.26. This rectifies that."
+    },
+    {
+        "name": "shouldCleanupSyso",
+        "comment": "// See https://github.com/josephspurrier/goversioninfo#command-line-flags"
+    },
+    {
+        "name": "copyFile",
+        "comment": "// the contents are identical to src the modification time is not updated."
+    },
+    {
+        "name": "listFiles",
+        "comment": "// changing so we always mirror them."
+    },
+    {
+        "name": "shouldRebuildAssets",
+        "comment": "// The GUI is up to date."
+    },
+    {
+        "name": "path",
+        "comment": "// so we should rebuild it."
+    },
+    {
+        "name": "proto",
+        "comment": "// We might have updated the protobuf package and should regenerate to match."
+    },
+    {
+        "name": "getVersion",
+        "comment": "// version and then add a -dev prerelease string."
+    },
+    {
+        "name": "semanticVersion",
+        "comment": "// This seems to be a dev build."
+    },
+    {
+        "name": "buildStamp",
+        "comment": "// There's some odd stuff in the branch name. Better skip it."
+    },
+    {
+        "name": "buildUser",
+        "comment": "// Fall back to \"now\"."
+    },
+    {
+        "name": "out",
+        "comment": "// Register the deflator."
+    },
+    {
+        "name": "codesign",
+        "comment": "// Binary file. Copy verbatim."
+    },
+    {
+        "name": "metalint",
+        "comment": "// Use that when signing"
+    },
+    {
+        "name": "s",
+        "comment": "// Then we filter out remaining ones with dashes (pre-releases etc)."
+    }
+]
