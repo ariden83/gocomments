@@ -15,7 +15,7 @@ github.com/mattn/go-isatty
 # github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b
 ## explicit
 github.com/mgutz/ansi
-# github.com/wamuir/graft v0.0.0-20240618181209-a4fa44a6742c
+# github.com/wamuir/graft v0.8.1
 ## explicit; go 1.18
 github.com/wamuir/graft/tensorflow
 github.com/wamuir/graft/tensorflow/core/framework/allocation_description_go_proto

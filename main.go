@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/ariden/gocomments/internal/comments"
 	"io"
 	"io/fs"
 	"os"
@@ -42,7 +43,7 @@ func run() error {
 	}
 
 	flag.StringVar(&args.local, "local", "", "put imports beginning with this string after 3rd-party package")
-	flag.Var((*ArrayStringFlag)(&args.prefixes), "prefix", "relative local prefix to from a new import group (can be given several times)")
+	flag.Var((*comments.ArrayStringFlag)(&args.prefixes), "prefix", "relative local prefix to from a new import group (can be given several times)")
 
 	flag.BoolVar(&args.listOnly, "l", false, "list files whose formatting differs from goimport's")
 	flag.BoolVar(&args.write, "w", false, "write result to (source) file instead of stdout")
@@ -61,7 +62,7 @@ const (
 )
 
 func process(args *appArgs, paths ...string) error {
-	cache := NewCommentConfigCache(args.local, args.prefixes)
+	cache := comments.NewConfigCache(args.local, args.prefixes)
 
 	if len(paths) == 0 {
 		return processFile(cache, "<standard input>", fileSourceStdin, os.Stdin, os.Stdout, args)
@@ -85,7 +86,7 @@ func process(args *appArgs, paths ...string) error {
 	return nil
 }
 
-func processFile(cache *CommentConfigCache, filename string, source fileSource, in io.Reader, out io.Writer, args *appArgs) error {
+func processFile(cache *comments.CommentConfigCache, filename string, source fileSource, in io.Reader, out io.Writer, args *appArgs) error {
 	if in == nil {
 		f, err := os.Open(filename)
 		if err != nil {
@@ -104,7 +105,7 @@ func processFile(cache *CommentConfigCache, filename string, source fileSource, 
 		return err
 	}
 
-	res, err := processComments(filename, src, cache)
+	res, err := comments.Process(filename, src, cache)
 	if err != nil {
 		return err
 	}
@@ -143,7 +144,7 @@ func processFile(cache *CommentConfigCache, filename string, source fileSource, 
 	return nil
 }
 
-func visitFile(cache *CommentConfigCache, args *appArgs, path string, d fs.DirEntry, err error) error {
+func visitFile(cache *comments.CommentConfigCache, args *appArgs, path string, d fs.DirEntry, err error) error {
 	if err != nil {
 		return err
 	}

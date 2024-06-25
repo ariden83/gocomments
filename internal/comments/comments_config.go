@@ -1,4 +1,4 @@
-package main
+package comments
 
 import (
 	"bufio"
@@ -69,8 +69,8 @@ type CommentConfigCache struct {
 	configs    map[string]*CommentConfig
 }
 
-// NewCommentConfigCache instantiates a new cache to store the configuration for all processed files.
-func NewCommentConfigCache(local string, prefixes []string) *CommentConfigCache {
+// NewConfigCache instantiates a new cache to store the configuration for all processed files.
+func NewConfigCache(local string, prefixes []string) *CommentConfigCache {
 	return &CommentConfigCache{
 		rootConfig: CommentConfig{
 			Local:    local,

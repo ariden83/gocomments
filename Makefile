@@ -9,7 +9,7 @@ run:
 	./bin/gocomments .
 
 generate-dataset:
-	python ./dataset/generate-from-github-v2.py
+	python ./dataset/generate_func_comments_from_local_repo.py
 
 generate-model:
 	pip install -q datasets
@@ -19,6 +19,9 @@ generate-model:
 	pip install python-dotenv
 	pip install requests pygments
 	python ./model/train.py
+
+test-model:
+	go run ./model/prompt.go
 
 install:
 	sudo go install ./

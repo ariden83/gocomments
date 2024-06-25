@@ -4,13 +4,12 @@ import math
 import random
 import datetime
 from pathlib import Path
-
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"  # reduce the amount of console output from TF
-
 import tensorflow as tf
 
-from transformers import *
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"  # reduce the amount of console output from TF
+os.environ['CUDA_VISIBLE_DEVICES'] = "0"
 
+from transformers import *
 from datasets import load_dataset
 
 logging.set_verbosity_warning()
@@ -73,22 +72,33 @@ def download_dataset(cache_dir):
     dataset_path = tf.keras.utils.get_file("mbpp.jsonl", origin=_url, cache_dir=cache_dir, cache_subdir=cache_dir)
     return dataset_path
 
+def download_local_dataset(cache_dir):
+    # Remplacez l'appel pour télécharger depuis l'URL par l'utilisation locale du fichier
+    local_file_path = os.path.join(".", "../dataset/functions_dataset_20240624_12.jsonl")
+
+    # Vérifiez si le fichier local existe
+    if os.path.exists(local_file_path):
+        print(f"Using local file: {local_file_path}")
+        return local_file_path
+    else:
+        raise FileNotFoundError(f"Local file {local_file_path} not found.")
+
 def convert_examples_to_features(examples, tokenizer, args):
     # encode text-code pairs
-    texts = examples['text']
-    codes = examples['code']
+    names = examples['name']
+    comments = examples['comment']
     # tests = [" ".join(test) for test in examples['test_list']] # convert list of test cases to single string
 
-    # encode texts by prepending the task for input sequence
-    inputs = [args.prefix + text for text in texts]
+    # encode names by prepending the task for input sequence
+    inputs = [args.prefix + text for text in names]
     model_inputs = tokenizer(inputs, max_length=args.max_input_length, padding="max_length", truncation=True)
 
-    # encode texts by prepending the task for input sequence and appending the test sequence
-    # inputs = [args.prefix + text + " " + test for text, test in zip(texts, tests)]
+    # encode names by prepending the task for input sequence and appending the test sequence
+    # inputs = [args.prefix + text + " " + test for text, test in zip(names, tests)]
     # model_inputs = tokenizer(inputs, max_length=args.max_input_length, padding="max_length", truncation=True)
 
-    # encode texts by prepending the task for input sequence
-    labels = tokenizer(codes, max_length=args.max_target_length, padding="max_length", truncation=True).input_ids
+    # encode names by prepending the task for input sequence
+    labels = tokenizer(comments, max_length=args.max_target_length, padding="max_length", truncation=True).input_ids
 
     # we need to replace the index of the padding tokens by -100
     # such that they are not taken into account by the CrossEntropyLoss
@@ -413,8 +423,10 @@ class Trainer:
 def run(args):
     logger.info(" Starting training / evaluation")
 
-    logger.info(" Downloading Data Files")
-    dataset_path = download_dataset(args.cache_dir)
+    # logger.info(" Downloading Data Files")
+    # dataset_path = download_dataset(args.cache_dir)
+
+    dataset_path = download_local_dataset(args.cache_dir)
 
     logger.info(" Loading Data Files")
     dataset = load_dataset('json', data_files=dataset_path)
@@ -477,11 +489,13 @@ class Args:
     seed = 2022
     epochs = 60
 
+    # timestamp = datetime.strftime("%Y%m%d_%H")
+
     # DIRECTORIES
     output_dir = "runs/"
     logging_dir = f"{output_dir}/logs/"
     checkpoint_dir = f"checkpoint"
-    save_dir = f"{output_dir}/saved_model/"
+    save_dir = f"{output_dir}/saved_model_2/"
     cache_dir = '../working/'
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     Path(logging_dir).mkdir(parents=True, exist_ok=True)

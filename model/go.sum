@@ -24,8 +24,8 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.6.1 h1:hDPOHmpOpP40lSULcqw7IrRb/u7w6RpDC9399XyoNd0=
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
-github.com/wamuir/graft v0.0.0-20240618181209-a4fa44a6742c h1:jZ2z1CzosNI17E8yns4vIvaZItbkW7oAEFnTmjCvBKo=
-github.com/wamuir/graft v0.0.0-20240618181209-a4fa44a6742c/go.mod h1:IKLlx/KOdSvQSfKwMiwXDqXsVodTJGdhl2t5EVu7iDg=
+github.com/wamuir/graft v0.8.1 h1:P13a8Y9jeh2s4g2agkBuEwAN/nE6tJC+aAg0ukg1XeQ=
+github.com/wamuir/graft v0.8.1/go.mod h1:IKLlx/KOdSvQSfKwMiwXDqXsVodTJGdhl2t5EVu7iDg=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=

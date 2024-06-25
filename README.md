@@ -427,7 +427,34 @@ anthropic-active: false
 #### B) Generate comments using [AWS AI](https://aws.amazon.com/fr/ai/)
 #### C) Generate comments using our own private AI
 
-- Generate the model with this command :
+##### 1) Generate dataset file :
+
+define your env variables with creating a .env file in dataset folder such as : 
+
+```
+LOCAL_REPO_PATH=/home/ariden/go/src/github.com/ariden/blockchain
+```
+
+and generate your dataset file
+
+> make generate-dataset
+
+with generate a dataset file such as : 
+
+```[
+    {
+        "name": "func NewSetParcelSenderCustomShippingFunc(parcelAdapter parceladapter.Adapter, addTrackingEventByParcelIDFunc AddTrackingEventByParcelIDFunc, logger logging.Logger, monitorer monitor.Monitorer) (SetParcelSenderCustomShippingFunc) {\n    // Function implementation\n\t}",
+        "comment": "NewSetParcelSenderCustomShippingFunc creates a new SetParcelSenderCustomShippingFunc.\n"
+    },
+    {
+        "name": "func NewGetParcelWithEventsFunc(parcelAdapter parceladapter.Adapter, pickupClient pickupclient.Client, trackingURLBuilderFunc TrackingURLBuilderFunc, logger logging.Logger, monitorer monitor.Monitorer) (GetParcelWithEventsFunc) {\n    // Function implementation\n\t}",
+        "comment": "NewGetParcelWithEventsFunc creates a new GetParcelWithEventsFunc.\n"
+    }]
+```
+
+##### 2) Generate a new model
+
+Generate a new model from your previous dataset file
 
 > make generate-model
 

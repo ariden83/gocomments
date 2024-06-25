@@ -407,8 +407,8 @@ type RewriterConfig struct {
 	// Enable the swap of kernel implementations based on the device placement
 	// (default is ON).
 	ImplementationSelector RewriterConfig_Toggle `protobuf:"varint,22,opt,name=implementation_selector,json=implementationSelector,proto3,enum=tensorflow.RewriterConfig_Toggle" json:"implementation_selector,omitempty"`
-	// Optimize data types for CUDA/oneDNN (default is OFF).
-	// This will try to use float16 on GPU/CPU which is faster.
+	// Optimize data types for CUDA (default is OFF).
+	// This will try to use float16 on GPU which is faster.
 	// Note that this can change the numerical stability of the graph and may
 	// require the use of loss scaling to maintain model convergence.
 	AutoMixedPrecision RewriterConfig_Toggle `protobuf:"varint,23,opt,name=auto_mixed_precision,json=autoMixedPrecision,proto3,enum=tensorflow.RewriterConfig_Toggle" json:"auto_mixed_precision,omitempty"`
