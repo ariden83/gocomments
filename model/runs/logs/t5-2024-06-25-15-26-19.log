@@ -1,0 +1,13 @@
+ Starting training / evaluation
+ Loading Data Files
+ Initializing Tokenizer
+ Preparing Features
+ Intializing training and validation dataset 
+ Intializing model | T5 
+***** Running training *****
+  Num examples = 44707
+  Num Epochs = 60
+  Total train batch size (w. parallel & distributed) = 8
+  Steps per epoch = 5588
+  Total optimization steps = 335280
+Epoch 1/60

@@ -1,4 +1,4 @@
-package main
+package comments
 
 import (
 	"bytes"
@@ -23,7 +23,7 @@ type file struct {
 	processor commentsProcess
 }
 
-func processComments(fileName string, src []byte, cache *CommentConfigCache) ([]byte, error) {
+func Process(fileName string, src []byte, cache *CommentConfigCache) ([]byte, error) {
 	fileSet := token.NewFileSet()
 
 	if strings.HasSuffix(fileName, "_test.go") {
@@ -101,7 +101,7 @@ func (file *file) autoComment() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func generateFuncCode(fn *ast.FuncDecl) string {
+func GenerateFuncCode(fn *ast.FuncDecl) string {
 	functionName := fn.Name.Name
 
 	var (
@@ -149,9 +149,7 @@ func generateFuncCode(fn *ast.FuncDecl) string {
 		}
 	}
 
-	return fmt.Sprintf(`func %s%s(%s) (%s) {
-    // Function implementation
-	}`, funcType, functionName, input, output)
+	return fmt.Sprintf(`func %s%s(%s) (%s)`, funcType, functionName, input, output)
 }
 
 func (file *file) commentConst(genDecl *ast.GenDecl) error {

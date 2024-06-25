@@ -1,4 +1,4 @@
-package main
+package comments
 
 import (
 	"bytes"
@@ -42,7 +42,7 @@ func (a *anthropic) isActive() bool {
 }
 
 func (a *anthropic) commentFunc(fn *ast.FuncDecl) (string, error) {
-	functionCode := generateFuncCode(fn)
+	functionCode := GenerateFuncCode(fn)
 	var funcComment string
 
 	payload := RequestPayload{

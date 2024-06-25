@@ -1,4 +1,4 @@
-package main
+package comments
 
 import (
 	"bytes"
@@ -37,7 +37,7 @@ func (o *openAI) isActive() bool {
 }
 
 func (o *openAI) commentFunc(fn *ast.FuncDecl) (string, error) {
-	return o.callOpenAI(generateFuncCode(fn))
+	return o.callOpenAI(GenerateFuncCode(fn))
 }
 
 type OpenAIMessage struct {
