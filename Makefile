@@ -12,15 +12,15 @@ generate-dataset:
 	python ./dataset/generate_func_comments_from_local_repo.py
 
 generate-model:
-	pip install -q datasets
-	pip install transformers
-	pip install tf-keras
-	pip install torch
-	pip install python-dotenv
-	pip install requests pygments
-	python ./model/train.py
+	sudo docker-compose -f ./model/docker-compose.yml down
+	sudo docker-compose -f ./model/docker-compose.yml up -d
+	sudo docker-compose -f ./model/docker-compose.yml logs tensorflow-container
 
 test-model:
+	pip install tf2onnx
+	pip install onnxruntime
+	chmod -R 755 runs/saved_model_*
+	chmod -R 755 onnx
 	go run ./model/prompt.go
 
 install:

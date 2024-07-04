@@ -74,7 +74,7 @@ def download_dataset(cache_dir):
 
 def download_local_dataset(cache_dir):
     # Remplacez l'appel pour télécharger depuis l'URL par l'utilisation locale du fichier
-    local_file_path = os.path.join(".", "../dataset/functions_dataset_20240624_12.jsonl")
+    local_file_path = os.path.join("/app/scripts/dataset/functions_dataset_20240624_12.jsonl")
 
     # Vérifiez si le fichier local existe
     if os.path.exists(local_file_path):
