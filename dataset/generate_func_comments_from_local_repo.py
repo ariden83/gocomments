@@ -78,7 +78,7 @@ print("load files from ", LOCAL_REPO_PATH)
 files = list_go_files(LOCAL_REPO_PATH)
 
 timestamp = datetime.now().strftime("%Y%m%d_%H")
-dataset_path = f"functions_dataset_{timestamp}.jsonl"
+dataset_path = f"./file/functions_dataset_{timestamp}.jsonl"
 
 # Ouvrir le fichier en mode append
 with open(dataset_path, 'a') as file:

@@ -3,3 +3,7 @@ runs/*
 dataset/.env
 dataset/*.json
 dataset/*.jsonl
+ngc-cli/*
+dataset/file/*
+model/.env
+model/runs/*
