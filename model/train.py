@@ -17,7 +17,7 @@ logging.set_verbosity_error()
 
 import logging
 
-print('TF version',tf.__version__)
+print('TF version', tf.__version__)
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU'))) # check GPU available
 
 from matplotlib.pylab import plt
@@ -25,17 +25,13 @@ from matplotlib.pylab import plt
 def setup_strategy(xla, fp16, no_cuda):
     print(" Tensorflow: setting up strategy")
 
-    # setup xla
     if xla:
-        print(" XLA Enabled")
         tf.config.optimizer.set_jit(True)
-
-    # setup mixed precision training
+        print("XLA Enabled")
     if fp16:
-        # Set to float16 at first
-        print(" Mixed Precision Training Enabled")
-        policy = tf.keras.mixed_precision.experimental.Policy("mixed_float16")
-        tf.keras.mixed_precision.experimental.set_policy(policy)
+        policy = tf.keras.mixed_precision.Policy('mixed_float16')
+        tf.keras.mixed_precision.set_global_policy(policy)
+        print("Mixed Precision Training Enabled")
 
     # setup distribution strategy
     gpus = tf.config.list_physical_devices("GPU")
@@ -57,6 +53,16 @@ def setup_strategy(xla, fp16, no_cuda):
 
     return strategy
 
+def check_gpu_memory():
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    if gpus:
+        try:
+            for gpu in gpus:
+                details = tf.config.experimental.get_memory_info(gpu)
+                print(f"GPU {gpu}: {details['current']} MB used out of {details['peak']} MB")
+        except RuntimeError as e:
+            print(e)
+
 def n_replicas(strategy):
     # return number of devices
     return strategy.num_replicas_in_sync
@@ -65,6 +71,7 @@ def n_replicas(strategy):
 # huggingface TF-T5 implementation has issues when mixed precision is enabled
 # we will disable FP16 for this but can be used for training any other model
 strategy = setup_strategy(xla=True, fp16=False, no_cuda=False)
+check_gpu_memory()
 
 def download_dataset(cache_dir):
     # download data using a keras utility
@@ -392,6 +399,7 @@ class Trainer:
                         # save checkpoint
                         ckpt_save_path = self.model.ckpt_manager.save()
                         logger.info(f"Saving checkpoint at {ckpt_save_path}")
+                        self.train_loss.reset_states()  # Ajout pour réinitialiser les métriques
                         break
 
                 # reset train loss after every epoch
