@@ -19,5 +19,5 @@ services:
       - LD_LIBRARY_PATH=/usr/local/lib/tensorflow:$LD_LIBRARY_PATH
     # command: /bin/bash -c "tail -f /dev/null"
     command: python3 /app/scripts/train.py
-    shm_size: '2gb'
+    # shm_size: '2gb'
     ipc: host
