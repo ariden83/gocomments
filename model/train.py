@@ -437,7 +437,7 @@ def run(args):
     dataset_path = download_local_dataset(args.cache_dir)
 
     logger.info(" Loading Data Files")
-    dataset = load_dataset('json', data_files=dataset_path)
+    dataset = load_dataset('json', data_files=dataset_path, cache_dir='/app/scripts/dataset/')
     # train test split
     dataset = dataset['train'].train_test_split(0.1, shuffle=False)
 

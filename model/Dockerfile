@@ -5,8 +5,8 @@ ENV TF_ENABLE_ONEDNN_OPTS=0
 
 # Installer les dépendances supplémentaires avec des versions spécifiques pour la compatibilité
 RUN pip install --upgrade pip
-RUN pip install transformers==4.27.4 datasets==2.10.1 torch==1.13.1 tf-keras==2.10.0 python-dotenv requests pygments
-RUN pip install -U scikit-learn==1.2.2 scipy==1.10.0 matplotlib==3.7.1 yahoo_fin==0.8.9.1
+RUN pip install fsspec==2023.9.2 transformers==4.28.1 tf-keras==2.14.1 keras==2.12.0 tokenizers==0.13.3 torch==1.13.1 python-dotenv requests pygments idna importlib-metadata libclang Markdown numpy tensorflow-estimator tensorflow-io-gcs-filesystem
+RUN pip install -U datasets==2.10.1 scikit-learn==1.2.2 scipy==1.10.0 matplotlib==3.7.1 yahoo_fin==0.8.9.1
 
 # Vérification de CUDA
 RUN nvcc --version
