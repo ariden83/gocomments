@@ -7,3 +7,4 @@ ngc-cli/*
 dataset/file/*
 model/.env
 model/runs/*
+api/myapp
