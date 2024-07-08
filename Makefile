@@ -25,7 +25,6 @@ generate-model:
 
 generate-api:
 	cd ./api && go mod tidy && go mod vendor
-	cd ..
 	sudo docker-compose -f ./api/docker-compose.yml down
 	sudo docker-compose -f ./api/docker-compose.yml build # --no-cache
 	sudo docker-compose -f ./api/docker-compose.yml up -d # --build

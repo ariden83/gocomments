@@ -44,7 +44,7 @@ func (p *prompt) loadModel() {
 	fmt.Println(output[0].Value())
 
 	// Charge le modèle
-	model, err := tf.LoadSavedModel("../runs/saved_model", []string{"serve"}, nil)
+	model, err := tf.LoadSavedModel("/app/models/saved_model_20240622", []string{"serve"}, nil)
 	if err != nil {
 		log.Fatalf("Erreur lors du chargement du modèle: %v", err)
 	}

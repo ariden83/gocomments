@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
-	github.com/wamuir/graft v0.6.0
+	github.com/wamuir/graft v0.8.1
 )
 
 require (
