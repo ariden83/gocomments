@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  go-tf-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - ../run/saved_model_20240622:/app/models
+    ports:
+      - "8080:8080"
+    environment:
+      - TF_ENABLE_ONEDNN_OPTS=0
+    command: ["sh", "-c", "go build -o myapp . && ./myapp"]
+    shm_size: '1gb'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      stack:
+        soft: 67108864
+        hard: 67108864
