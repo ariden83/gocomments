@@ -363,6 +363,14 @@ class Trainer:
             folder = os.path.join(self.args.output_dir, self.args.checkpoint_dir)
             ckpt = tf.train.Checkpoint(optimizer=self.optimizer, model=self.model)
             self.model.ckpt_manager = tf.train.CheckpointManager(ckpt, folder, max_to_keep=1)
+
+            # restore checkpoint if available
+            if self.model.ckpt_manager.latest_checkpoint:
+                ckpt.restore(self.model.ckpt_manager.latest_checkpoint)
+                logger.info(f"Restored from checkpoint: {self.model.ckpt_manager.latest_checkpoint}")
+            else:
+                logger.info("Starting training from scratch")
+
             iterations = self.optimizer.iterations
 
             logger.info("***** Running training *****")
@@ -399,19 +407,17 @@ class Trainer:
                         # save checkpoint
                         ckpt_save_path = self.model.ckpt_manager.save()
                         logger.info(f"Saving checkpoint at {ckpt_save_path}")
-                        self.train_loss.reset_states()  # Ajout pour réinitialiser les métriques
+                        self.train_loss.reset_states()
                         break
 
                 # reset train loss after every epoch
-                #print(training_loss.numpy())
-                self.train_loss_dict[epoch_iter] =  training_loss.numpy()
+                self.train_loss_dict[epoch_iter] = training_loss.numpy()
                 print(self.train_loss_dict[epoch_iter])
                 self.train_loss.reset_states()
 
-
             plt.plot(range(self.args.epochs), self.train_loss_dict.values(), label='Training Loss')
-            print( self.train_loss_dict.values())
-            print( self.val_loss_dict)
+            print(self.train_loss_dict.values())
+            print(self.val_loss_dict)
             plt.plot(range(self.args.epochs), self.val_loss_dict, label='Validation Loss')
 
             # Add in a title and axes labels
@@ -420,13 +426,14 @@ class Trainer:
             plt.ylabel('Loss')
 
             # Set the tick locations
-            #plt.xticks(arange(0, 21, 2))
+            # plt.xticks(arange(0, 21, 2))
 
             # Display the plot
             plt.legend(loc='best')
-            plt.show()
+            plt.savefig(f"{self.args.output_dir}/{self.args.checkpoint_dir}/training_curves.jpg")
+
             end_time = datetime.datetime.now()
-            logger.info(f"Training took: {str(end_time - start_time)}")
+            logger.info("Trainning Time cost: %s", str(end_time - start_time))
 
 def run(args):
     logger.info(" Starting training / evaluation")
@@ -445,7 +452,7 @@ def run(args):
     tokenizer = RobertaTokenizer.from_pretrained(args.tokenizer_name)
 
     logger.info(" Preparing Features")
-    dataset = dataset.map(convert_examples_to_features, batched=True, fn_kwargs={"tokenizer":tokenizer, "args":args})
+    dataset = dataset.map(convert_examples_to_features, batched=True, fn_kwargs={"tokenizer": tokenizer, "args": args})
 
     logger.info(" Intializing training and validation dataset ")
     train_dataset = dataset['train']
