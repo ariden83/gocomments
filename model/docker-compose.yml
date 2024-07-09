@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  tensorflow-container:
+  create:
     build: .
     # runtime: nvidia
     # deploy:
@@ -10,7 +10,7 @@ services:
     #      devices:
     #        - capabilities: [gpu]
     volumes:
-      - ../runs:/models
+      - ../runs:/workspace/runs
       - ../model:/app/scripts
       - ../dataset/file:/app/scripts/dataset
     environment:

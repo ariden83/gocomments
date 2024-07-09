@@ -12,10 +12,10 @@ generate-dataset:
 	python ./dataset/generate_func_comments_from_local_repo.py
 
 generate-model:
-	sudo docker-compose -f ./model/docker-compose.yml down
-	sudo docker-compose -f ./model/docker-compose.yml build # --no-cache
-	sudo docker-compose -f ./model/docker-compose.yml up -d # --build
-	sudo docker-compose -f ./model/docker-compose.yml logs tensorflow-container
+	sudo docker-compose -f ./model/docker-compose.yml -p model down
+	sudo docker-compose -f ./model/docker-compose.yml -p model build # --no-cache
+	sudo docker-compose -f ./model/docker-compose.yml -p model up -d # --build
+	sudo docker-compose -f ./model/docker-compose.yml -p model logs create
 
 #convert-model:
 #	pip install tf2onnx
