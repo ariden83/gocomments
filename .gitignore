@@ -9,3 +9,5 @@ model/.env
 model/runs/*
 api/myapp
 runs-backup
+saved_model
+runs-v2

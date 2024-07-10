@@ -67,6 +67,19 @@ def n_replicas(strategy):
     # return number of devices
     return strategy.num_replicas_in_sync
 
+def get_current_checkpoint_epoch(ckpt_dir):
+    checkpoint_files = [f for f in os.listdir(ckpt_dir) if f.startswith('ckpt') and f.endswith('.index')]
+    if not checkpoint_files:
+        return 0
+    latest_ckpt = max(checkpoint_files, key=lambda x: int(x.split('-')[1].split('.')[0]))
+    current_epoch = int(latest_ckpt.split('-')[1].split('.')[0])
+    return current_epoch
+
+def adjust_epochs(args, current_epoch):
+    args.epochs = args.epochs - current_epoch
+    print(f"Adjusted number of epochs to: {args.epochs}")
+
+
 # note:
 # huggingface TF-T5 implementation has issues when mixed precision is enabled
 # we will disable FP16 for this but can be used for training any other model
@@ -470,6 +483,10 @@ def run(args):
         # model must be created under `strategy.scope`
         model = TFT5ForConditionalGeneration.from_pretrained(args.model_name_or_path, from_pt=True)
 
+    # Adjust epochs based on the checkpoint
+    current_epoch = get_current_checkpoint_epoch(os.path.join(args.output_dir, args.checkpoint_dir))
+    adjust_epochs(args, current_epoch)
+
     # custom training loop
     trainer = Trainer(model, args, tf_train_dataset, tf_validation_dataset, num_train_examples, num_validation_examples)
     trainer.train()
@@ -563,15 +580,15 @@ def predict_from_dataset(args):
     # run-predict on text
     decoded_code = run_predict(args, text)
 
-    print("#" * 25); print("QUERY: ", text);
+    print("#" * 25); print("QUERY: ", text)
     print()
-    print('#' * 25); print("ORIGINAL: "); print("\n", code);
+    print('#' * 25); print("ORIGINAL: "); print("\n", code)
     print()
-    print('#' * 25); print("GENERATED: "); print("\n", decoded_code);
+    print('#' * 25); print("GENERATED: "); print("\n", decoded_code)
 
 def predict_from_text(args, text):
     # run-predict on text
     decoded_code = run_predict(args, text)
-    print("#" * 25); print("QUERY: ", text);
+    print("#" * 25); print("QUERY: ", text)
     print()
-    print('#' * 25); print("GENERATED: "); print("\n", decoded_code);
+    print('#' * 25); print("GENERATED: "); print("\n", decoded_code)
