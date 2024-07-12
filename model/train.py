@@ -18,10 +18,9 @@ logging.set_verbosity_error()
 import logging
 
 print('TF version', tf.__version__)
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))  # check GPU available
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU'))) # check GPU available
 
 from matplotlib.pylab import plt
-
 
 def setup_strategy(xla, fp16, no_cuda):
     print(" Tensorflow: setting up strategy")
@@ -54,7 +53,6 @@ def setup_strategy(xla, fp16, no_cuda):
 
     return strategy
 
-
 def check_gpu_memory():
     gpus = tf.config.experimental.list_physical_devices('GPU')
     if gpus:
@@ -65,11 +63,9 @@ def check_gpu_memory():
         except RuntimeError as e:
             print(e)
 
-
 def n_replicas(strategy):
     # return number of devices
     return strategy.num_replicas_in_sync
-
 
 def get_current_checkpoint_epoch(ckpt_dir):
     checkpoint_files = [f for f in os.listdir(ckpt_dir) if f.startswith('ckpt') and f.endswith('.index')]
@@ -78,7 +74,6 @@ def get_current_checkpoint_epoch(ckpt_dir):
     latest_ckpt = max(checkpoint_files, key=lambda x: int(x.split('-')[1].split('.')[0]))
     current_epoch = int(latest_ckpt.split('-')[1].split('.')[0])
     return current_epoch
-
 
 def adjust_epochs(args, current_epoch):
     args.epochs = args.epochs - current_epoch
@@ -91,13 +86,11 @@ def adjust_epochs(args, current_epoch):
 strategy = setup_strategy(xla=True, fp16=False, no_cuda=False)
 check_gpu_memory()
 
-
 def download_dataset(cache_dir):
     # download data using a keras utility
-    _url = "https://raw.githubusercontent.com/google-research/google-research/master/mbpp/mbpp.jsonl"  # download mbpp dataset
+    _url = "https://raw.githubusercontent.com/google-research/google-research/master/mbpp/mbpp.jsonl" # download mbpp dataset
     dataset_path = tf.keras.utils.get_file("mbpp.jsonl", origin=_url, cache_dir=cache_dir, cache_subdir=cache_dir)
     return dataset_path
-
 
 def download_local_dataset(cache_dir):
     # Remplacez l'appel pour télécharger depuis l'URL par l'utilisation locale du fichier
@@ -109,7 +102,6 @@ def download_local_dataset(cache_dir):
         return local_file_path
     else:
         raise FileNotFoundError(f"Local file {local_file_path} not found.")
-
 
 def convert_examples_to_features(examples, tokenizer, args):
     # encode text-code pairs
@@ -147,12 +139,11 @@ def get_train_tfdataset(train_dataset, num_train_examples, args):
     train_dataset.set_format(type='tensorflow', columns=columns)
 
     # specify return types
-    return_types = {'input_ids': tf.int32, 'attention_mask': tf.int32, 'labels': tf.int32}
+    return_types = {'input_ids':tf.int32, 'attention_mask':tf.int32, 'labels':tf.int32}
     # specify return shapes
-    return_shapes = {'input_ids': tf.TensorShape([None]), 'attention_mask': tf.TensorShape([None]),
-                     'labels': tf.TensorShape([None])}
+    return_shapes = {'input_ids': tf.TensorShape([None]),'attention_mask': tf.TensorShape([None]), 'labels': tf.TensorShape([None])}
     # initialize dataset
-    tf_dataset = tf.data.Dataset.from_generator(lambda: train_dataset, return_types, return_shapes)
+    tf_dataset = tf.data.Dataset.from_generator(lambda : train_dataset, return_types, return_shapes)
 
     # turn off auto-sharding
     options = tf.data.Options()
@@ -170,7 +161,6 @@ def get_train_tfdataset(train_dataset, num_train_examples, args):
     # distribute dataset to devices
     return strategy.experimental_distribute_dataset(ds)
 
-
 def get_validation_tfdataset(eval_dataset, num_validation_examples, args):
     # select feature columns
     columns = ['input_ids', 'attention_mask', 'labels']
@@ -178,12 +168,11 @@ def get_validation_tfdataset(eval_dataset, num_validation_examples, args):
     eval_dataset.set_format(type='tensorflow', columns=columns)
 
     # specify return types
-    return_types = {'input_ids': tf.int32, 'attention_mask': tf.int32, 'labels': tf.int32}
+    return_types = {'input_ids':tf.int32, 'attention_mask':tf.int32, 'labels':tf.int32}
     # specify return shapes
-    return_shapes = {'input_ids': tf.TensorShape([None]), 'attention_mask': tf.TensorShape([None]),
-                     'labels': tf.TensorShape([None])}
+    return_shapes = {'input_ids': tf.TensorShape([None]),'attention_mask': tf.TensorShape([None]), 'labels': tf.TensorShape([None])}
     # initialize dataset
-    tf_dataset = tf.data.Dataset.from_generator(lambda: eval_dataset, return_types, return_shapes)
+    tf_dataset = tf.data.Dataset.from_generator(lambda : eval_dataset, return_types, return_shapes)
 
     # turn off auto-sharding
     options = tf.data.Options()
@@ -200,13 +189,11 @@ def get_validation_tfdataset(eval_dataset, num_validation_examples, args):
     # distribute dataset to devices
     return strategy.experimental_distribute_dataset(ds)
 
-
 def fix_all_seeds(seed):
     # set random seed
     os.environ['PYTHONHASHSEED'] = str(seed)
     random.seed(seed)
     tf.random.set_seed(seed)
-
 
 def init_logger(log_file=None, log_file_level=logging.NOTSET):
     # initialize logger for tracking events and save in file
@@ -228,10 +215,9 @@ def init_logger(log_file=None, log_file_level=logging.NOTSET):
         logger.addHandler(file_handler)
     return logger
 
-
 class ProgressBar(object):
     # custom progress bar
-    def __init__(self, n_total, width=30, desc='Training'):
+    def __init__(self, n_total,width=30,desc = 'Training'):
         self.width = width
         self.n_total = n_total
         self.start_time = time.time()
@@ -276,20 +262,16 @@ class ProgressBar(object):
         show_bar += time_info
         if len(info) != 0:
             show_info = f'{show_bar} ' + \
-                        "-".join([f' {key}: {value:.4f} ' if key != "learning_rate" else f' {key}: {value:.8f} ' for
-                                  key, value in info.items()])
+                        "-".join([f' {key}: {value:.4f} ' if key != "learning_rate" else f' {key}: {value:.8f} ' for key, value in info.items()])
             print(show_info, end='')
         else:
             print(show_bar, end='')
-
 
 class Trainer:
     def __init__(
             self, model, args, train_dataset, validation_dataset,
             num_train_examples, num_validation_examples
     ):
-        self.steps_per_epoch = None
-        self.train_loss = None
         self.model = model
         self.args = args
 
@@ -317,8 +299,7 @@ class Trainer:
 
     def evaluation_step(self, features, labels, nb_instances_in_global_batch):
         # forward pass
-        outputs = self.model(input_ids=features['input_ids'], attention_mask=features['attention_mask'], labels=labels,
-                             training=False)[:2]
+        outputs = self.model(input_ids=features['input_ids'], attention_mask=features['attention_mask'], labels=labels, training=False)[:2]
         loss, logits = outputs[:2]
         # loss scaling
         scaled_loss = loss / tf.cast(nb_instances_in_global_batch, dtype=loss.dtype)
@@ -356,16 +337,14 @@ class Trainer:
 
     def apply_gradients(self, features, labels, nb_instances_in_global_batch):
         # forward pass
-        outputs = self.model(input_ids=features['input_ids'], attention_mask=features['attention_mask'], labels=labels,
-                             training=True)[:2]
+        outputs = self.model(input_ids=features['input_ids'], attention_mask=features['attention_mask'], labels=labels, training=True)[:2]
         loss, logits = outputs[:2]
         # loss scaling
         scaled_loss = loss / tf.cast(nb_instances_in_global_batch, dtype=loss.dtype)
         # calculate gradients
         gradients = tf.gradients(scaled_loss, self.model.trainable_variables)
         # convert gradients with nan value
-        gradients = [g if g is not None else tf.zeros_like(v) for g, v in
-                     zip(gradients, self.model.trainable_variables)]
+        gradients = [g if g is not None else tf.zeros_like(v) for g, v in zip(gradients, self.model.trainable_variables)]
         # optimize the model
         self.optimizer.apply_gradients(list(zip(gradients, self.model.trainable_variables)))
         # add current batch loss
@@ -384,7 +363,7 @@ class Trainer:
 
     def train(self):
         # calculate total training steps
-        num_updates_per_epoch = self.num_train_examples // self.args.train_batch_size
+        num_updates_per_epoch = self.num_train_examples // args.train_batch_size
         self.steps_per_epoch = num_updates_per_epoch
         t_total = self.steps_per_epoch * self.args.epochs
 
@@ -421,43 +400,49 @@ class Trainer:
                 logger.info(f"Epoch {epoch_iter + 1}/{self.args.epochs}")
 
                 pbar = ProgressBar(n_total=self.steps_per_epoch, desc='Training')
-
-                # Apply dataset transformations manually
-                # train_dataset = self.train_dataset.unbatch().shuffle(buffer_size=10000).batch(self.args.train_batch_size).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
-
                 # iterate over training dataset
                 for step, batch in enumerate(self.train_dataset):
-                    # Distributed training step
+                    # distributed training step
                     self.distributed_training_steps(batch)
 
                     self.global_step = iterations.numpy()
                     training_loss = self.train_loss.result() / (step + 1)
 
-                    logs = {"training_loss": training_loss.numpy(),
-                            "learning_rate": self.lr_scheduler(self.global_step).numpy()}
-                    pbar(step=step, info=logs)
+                    logger.info(f"Step : {step} / {self.steps_per_epoch}, Training loss: {training_loss.numpy()}, Learning rate: {self.lr_scheduler(self.global_step).numpy()}")
 
                     if self.global_step % self.steps_per_epoch == 0:
                         print("\n------------- train result -----------------")
-                        # Call to evaluation loop
+                        # call to evaluation loop
                         self.evaluate()
-                        # Save checkpoint
+                        # save checkpoint
                         ckpt_save_path = self.model.ckpt_manager.save()
                         logger.info(f"Saving checkpoint at {ckpt_save_path}")
 
-                        # Save the model in a specific directory for the current epoch
-                        model_save_dir = os.path.join(self.args.output_dir, self.args.checkpoint_model_dir, f"checkpoint-{epoch_iter + 1}")
-                        os.makedirs(model_save_dir, exist_ok=True)
-                        self.model.save_pretrained(model_save_dir)
-                        self.tokenizer.save_pretrained(model_save_dir)
+                        try:
+                            model_save_dir = os.path.join(self.args.output_dir, self.args.checkpoint_model_dir, f"checkpoint-{epoch_iter + 1}")
+                            os.makedirs(model_save_dir, exist_ok=True)
+                            self.model.save_pretrained(model_save_dir)
 
+                            tokenizer = RobertaTokenizer.from_pretrained(args.tokenizer_name)
+                            tokenizer.save_pretrained(model_save_dir)
+
+                            model_save_dir = os.path.join(self.args.output_dir, self.args.checkpoint_model_dir, f"checkpoint-tf-{epoch_iter + 1}")
+                            os.makedirs(model_save_dir, exist_ok=True)
+                            self.model.save(model_save_dir, save_format='tf')
+
+                        except OSError as e:
+                            print(f"An error occurred while creating the directory or saving the model/tokenizer: {e}")
+                        except Exception as e:
+                            print(f"An unexpected error occurred: {e}")
                         self.train_loss.reset_states()
                         break
 
-                # Reset train loss after every epoch
+                # reset train loss after every epoch
+                # print(training_loss.numpy())
                 self.train_loss_dict[epoch_iter] = training_loss.numpy()
                 print(self.train_loss_dict[epoch_iter])
                 self.train_loss.reset_states()
+
 
             plt.plot(range(self.args.epochs), self.train_loss_dict.values(), label='Training Loss')
             print(self.train_loss_dict.values())
@@ -474,6 +459,8 @@ class Trainer:
 
             # Display the plot
             plt.legend(loc='best')
+            plt.show()
+
             plt.savefig(f"{self.args.output_dir}/{self.args.checkpoint_dir}/training_curves.jpg")
 
             end_time = datetime.datetime.now()
@@ -497,7 +484,7 @@ def run(args):
     tokenizer = RobertaTokenizer.from_pretrained(args.tokenizer_name)
 
     logger.info(" Preparing Features")
-    dataset = dataset.map(convert_examples_to_features, batched=True, fn_kwargs={"tokenizer": tokenizer, "args": args})
+    dataset = dataset.map(convert_examples_to_features, batched=True, fn_kwargs={"tokenizer":tokenizer, "args":args})
 
     logger.info(" Intializing training and validation dataset ")
     train_dataset = dataset['train']
@@ -568,19 +555,6 @@ class Args:
     Path(save_dir).mkdir(parents=True, exist_ok=True)
 
 
-# initialize training arguments
-args = Args()
-# initialize logger
-logger = init_logger(log_file=os.path.join(args.logging_dir,
-                                           f"{args.model_type}-{time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime())}.log"))
-# fix all seeds
-fix_all_seeds(args.seed)
-
-if __name__ == "__main__":
-    # run training and evaluation
-    dataset = run(args)
-
-
 def run_predict(args, text):
     # load saved finetuned model
     model = TFT5ForConditionalGeneration.from_pretrained(args.save_dir)
@@ -589,8 +563,7 @@ def run_predict(args, text):
 
     # encode texts by prepending the task for input sequence and appending the test sequence
     query = args.prefix + text
-    encoded_text = tokenizer(query, return_tensors='tf', padding='max_length', truncation=True,
-                             max_length=args.max_input_length)
+    encoded_text = tokenizer(query, return_tensors='tf', padding='max_length', truncation=True, max_length=args.max_input_length)
 
     # inference
     generated_code = model.generate(
@@ -618,24 +591,43 @@ def predict_from_dataset(args):
     # run-predict on text
     decoded_code = run_predict(args, text)
 
-    print("#" * 25)
-    print("QUERY: ", text)
+    print("#" * 25); print("QUERY: ", text)
     print()
-    print('#' * 25)
-    print("ORIGINAL: ")
+    print('#' * 25); print("ORIGINAL: ")
     print("\n", code)
     print()
-    print('#' * 25)
-    print("GENERATED: ")
+    print('#' * 25); print("GENERATED: ")
     print("\n", decoded_code)
 
 
 def predict_from_text(args, text):
     # run-predict on text
     decoded_code = run_predict(args, text)
-    print("#" * 25)
-    print("QUERY: ", text)
+    print("#" * 25); print("QUERY: ", text)
     print()
-    print('#' * 25)
-    print("GENERATED: ")
+    print('#' * 25); print("GENERATED: ")
     print("\n", decoded_code)
+
+
+def transform_mode():
+    # Chemin du fichier .h5
+    h5_model_path = "runs/checkpoint_model/checkpoint-1/tf_model.h5"
+    # Charger le modèle à partir du fichier .h5
+    model = tf.keras.models.load_model(h5_model_path)
+    # Chemin du répertoire où sauvegarder le modèle au format SavedModel
+    saved_model_dir = "runs/checkpoint_model/checkpoint-1"
+    # Sauvegarder le modèle au format SavedModel
+    model.save(saved_model_dir, save_format='tf')
+    print(f"Model saved in SavedModel format at: {saved_model_dir}")
+
+# initialize training arguments
+args = Args()
+# initialize logger
+logger = init_logger(log_file=os.path.join(args.logging_dir, f"{args.model_type}-{time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime())}.log"))
+# fix all seeds
+fix_all_seeds(args.seed)
+
+if __name__ == "__main__":
+    # run training and evaluation
+    dataset = run(args)
+
