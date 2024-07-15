@@ -7,7 +7,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/app
-      - ../runs/checkpoint_model/checkpoint-1:/app/models
+      - ../dataset/file:/app/dataset
+      - ../runs/checkpoint_model/checkpoint-tf-6:/app/models
     ports:
       - "8080:8080"
     command: ["sh", "-c", "go build -o /bin/myapp . && /bin/myapp"]
