@@ -25,11 +25,11 @@ generate-model:
 	$(DOCKER_COMPOSE) ./model/docker-compose.yml -p model $(DOCKER_UP) # --build
 	$(DOCKER_COMPOSE) ./model/docker-compose.yml -p model $(DOCKER_LOGS) create
 
-generate-from-checkpoint:
-	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_DOWN)
-	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_BUILD) # --no-cache
-	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_UP) # --build
-	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_LOGS) create
+# generate-from-checkpoint:
+#	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_DOWN)
+#	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_BUILD) # --no-cache
+#	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_UP) # --build
+#	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_LOGS) create
 
 generate-api:
 	cd ./api && go mod tidy && go mod vendor
