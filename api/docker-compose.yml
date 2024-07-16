@@ -23,5 +23,4 @@ services:
     volumes:
       - .:/app
       - ../dataset/file:/app/dataset
-      - ../runs/checkpoint_model/checkpoint-tf-7:/app/models
     command: ["sh", "-c", "go build -o /bin/myapp . && /bin/myapp"]
