@@ -2,11 +2,15 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"math/rand"
+	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -14,7 +18,8 @@ import (
 )
 
 type Prompt struct {
-	Model *tf.SavedModel
+	model         *tf.SavedModel
+	tokenizerName string
 }
 
 type Record struct {
@@ -29,7 +34,10 @@ type Args struct {
 func main() {
 	args := Args{ModelDir: "/app/models"}
 
-	p := Prompt{}
+	p := Prompt{
+		tokenizerName: "Salesforce/codet5-base",
+	}
+
 	if err := p.loadModel(args.ModelDir); err != nil {
 		log.Fatalf("fail to load model: %v", err)
 	}
@@ -40,21 +48,21 @@ func main() {
 		}
 	}()
 
-	if err := p.predictFromDataset(args); err != nil {
+	if err := p.predictFromDataset(); err != nil {
 		log.Fatalf("fail to predict from dataset: %v", err)
 	}
 }
 
 func (p *Prompt) loadModel(modelDir string) error {
 	var err error
-	p.Model, err = tf.LoadSavedModel(modelDir, []string{"serve"}, nil)
+	p.model, err = tf.LoadSavedModel(modelDir, []string{"serve"}, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *Prompt) predictFromDataset(args Args) error {
+func (p *Prompt) predictFromDataset() error {
 	file, err := os.Open("/app/dataset/functions_dataset_20240624_12.jsonl")
 	if err != nil {
 		return err
@@ -65,7 +73,7 @@ func (p *Prompt) predictFromDataset(args Args) error {
 		}
 	}()
 
-	records := []Record{}
+	var records []Record
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -84,92 +92,132 @@ func (p *Prompt) predictFromDataset(args Args) error {
 	rand.Seed(time.Now().UnixNano())
 	index := rand.Intn(len(records))
 	text := records[index].Text
-	code := records[index].Result
+	commentOriginal := records[index].Result
 
-	decodedCode, err := p.runPredict(text)
+	commentPredicted, err := p.runPredict(text)
 	if err != nil {
 		return err
 	}
 
 	fmt.Println(strings.Repeat("#", 25))
 	fmt.Println("QUERY:", text)
-	fmt.Println()
 	fmt.Println(strings.Repeat("#", 25))
 	fmt.Println("ORIGINAL:")
-	fmt.Println()
-	fmt.Println(code)
-	fmt.Println()
+	fmt.Println(commentOriginal)
 	fmt.Println(strings.Repeat("#", 25))
 	fmt.Println("GENERATED:")
-	fmt.Println()
-	fmt.Println(decodedCode)
+	fmt.Println(commentPredicted)
 
 	return nil
 }
 
+type TokenizeRequest struct {
+	Text    string `json:"text"`
+	Version int    `json:"version"`
+}
+
+type TokenizeResponse struct {
+	Comment string `json:"comment"`
+}
+
 func (p *Prompt) runPredict(text string) (string, error) {
-	// Prétraitement du texte
-	inputIds := preprocessText(text)
-
-	// Convertir inputIds en un tableau de int32
-	inputIdsInt32 := make([]int32, len(inputIds))
-	for i, id := range inputIds {
-		inputIdsInt32[i] = int32(id)
-	}
-
-	// Créer le tensor d'entrée pour TensorFlow
-	inputTensor, err := tf.NewTensor([][]int32{inputIdsInt32})
+	requestBody, err := json.Marshal(TokenizeRequest{
+		Text:    text,
+		Version: 9,
+	})
 	if err != nil {
-		return "", fmt.Errorf("error creating the tensor: %v", err)
+		return "", err
 	}
 
-	// Créer un tensor pour les masques d'attention (assume all-ones mask)
-	attentionMask := make([]int32, len(inputIdsInt32))
-	for i := range attentionMask {
-		attentionMask[i] = 1
+	// Vérifier que le conteneur est en cours d'exécution
+	for {
+		resp, err := http.Get("http://tokenizer_container:5000/ping")
+		if err != nil {
+			time.Sleep(1 * time.Second)
+			continue
+		}
+		if resp.StatusCode == http.StatusOK {
+			break
+		}
+		log.Printf("wait initiliazation of tokenizer_container")
+		time.Sleep(10 * time.Second)
 	}
-	maskTensor, err := tf.NewTensor([][]int32{attentionMask})
+
+	resp, err := http.Post("http://tokenizer_container:5000/tokenize", "application/json", bytes.NewBuffer(requestBody))
 	if err != nil {
-		return "", fmt.Errorf("error creating the attention mask tensor: %v", err)
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("failed to call tokenizer API: status code %d", resp.StatusCode)
 	}
 
-	// Exécuter le modèle sur l'entrée
-	result, err := p.Model.Session.Run(
-		map[tf.Output]*tf.Tensor{
-			p.Model.Graph.Operation("serving_default_input_ids").Output(0):              inputTensor,
-			p.Model.Graph.Operation("serving_default_attention_mask").Output(0):         maskTensor,
-			p.Model.Graph.Operation("serving_default_decoder_input_ids").Output(0):      inputTensor,
-			p.Model.Graph.Operation("serving_default_decoder_attention_mask").Output(0): maskTensor,
-		},
-		[]tf.Output{
-			p.Model.Graph.Operation("StatefulPartitionedCall").Output(0),
-		},
-		nil,
-	)
+	var tokenizeResponse TokenizeResponse
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("error running model: %v", err)
+		return "", err
 	}
 
-	generatedCode, ok := result[0].Value().([][][]float32)
-	if !ok {
-		return "", fmt.Errorf("error converting result: unexpected type %T", result[0].Value())
+	if err := json.Unmarshal(body, &tokenizeResponse); err != nil {
+		return "", err
 	}
 
-	decodedText := convertFloat32ArrayToString(generatedCode)
+	return tokenizeResponse.Comment, nil
+}
+
+// Fonction pour décoder les tokens générés
+func (p *Prompt) decodeTokens(tokenizerPath string, generatedTokens []float32) (string, error) {
+	// Implémenter le décodage selon votre tokenizer spécifique.
+	// Cette partie dépend de votre tokenizer utilisé pour l'encodage.
+
+	// Exemple simplifié :
+	decodedText := "Decoded text from tokens"
 	return decodedText, nil
 }
 
-func preprocessText(text string) []int {
-	// Appliquer le prétraitement nécessaire pour convertir la chaîne de caractères en une liste d'IDs
-	// Exemple très simpliste, en pratique cela doit être plus sophistiqué
-	// Vous devrez ajuster cette partie en fonction de votre modèle
-	words := strings.Fields(text)
-	inputIds := make([]int, len(words))
-	for i, _ := range words {
-		// Ceci est un exemple de mappage des mots en IDs fictifs. Remplacez ceci par votre propre tokenizer.
-		inputIds[i] = i + 1 // Vous aurez besoin d'un vrai tokenizer ici.
+func (p *Prompt) waitTokenizerContainer() error {
+	for {
+		cmd := exec.Command("docker", "inspect", "-f", "{{.State.Running}}", "tokenizer_container")
+		var out bytes.Buffer
+		cmd.Stdout = &out
+		if err := cmd.Run(); err != nil {
+			return err
+		}
+		if out.String() == "true\n" {
+			break
+		}
+		time.Sleep(1 * time.Second)
 	}
-	return inputIds
+	return nil
+}
+
+type tokenizeResp struct {
+	InputIDs      [][]int32 `json:"input_ids"`
+	AttentionMask [][]int32 `json:"attention_mask"`
+}
+
+func (p *Prompt) tokenizeWithPython(text string) (tokenizeResp, error) {
+	var tokenize tokenizeResp
+	/*if err := p.waitTokenizerContainer(); err != nil {
+		return tokenize, err
+	}*/
+
+	cmd := exec.Command("docker", "exec", "tokenizer_container", "python3", "tokenizer_script.py",
+		text, p.tokenizerName)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	if err := cmd.Run(); err != nil {
+		return tokenize, err
+	}
+
+	if err := json.Unmarshal(out.Bytes(), &tokenize); err != nil {
+		return tokenize, err
+	}
+
+	log.Printf("tokenize found: %+v", tokenize)
+
+	return tokenize, nil
 }
 
 func convertFloat32ArrayToString(arr [][][]float32) string {
@@ -185,5 +233,5 @@ func convertFloat32ArrayToString(arr [][][]float32) string {
 }
 
 func (p *Prompt) close() error {
-	return p.Model.Session.Close()
+	return p.model.Session.Close()
 }

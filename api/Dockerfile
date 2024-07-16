@@ -5,5 +5,3 @@ RUN curl -L https://storage.googleapis.com/tensorflow/versions/2.16.1/libtensorf
     && ldconfig
 
 WORKDIR /app
-
-

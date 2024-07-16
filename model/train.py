@@ -484,7 +484,7 @@ def run(args):
     tokenizer = RobertaTokenizer.from_pretrained(args.tokenizer_name)
 
     logger.info(" Preparing Features")
-    dataset = dataset.map(convert_examples_to_features, batched=True, fn_kwargs={"tokenizer":tokenizer, "args":args})
+    dataset = dataset.map(convert_examples_to_features, batched=True, fn_kwargs={"tokenizer": tokenizer, "args": args})
 
     logger.info(" Intializing training and validation dataset ")
     train_dataset = dataset['train']
@@ -608,17 +608,6 @@ def predict_from_text(args, text):
     print('#' * 25); print("GENERATED: ")
     print("\n", decoded_code)
 
-
-def transform_mode():
-    # Chemin du fichier .h5
-    h5_model_path = "runs/checkpoint_model/checkpoint-1/tf_model.h5"
-    # Charger le modèle à partir du fichier .h5
-    model = tf.keras.models.load_model(h5_model_path)
-    # Chemin du répertoire où sauvegarder le modèle au format SavedModel
-    saved_model_dir = "runs/checkpoint_model/checkpoint-1"
-    # Sauvegarder le modèle au format SavedModel
-    model.save(saved_model_dir, save_format='tf')
-    print(f"Model saved in SavedModel format at: {saved_model_dir}")
 
 # initialize training arguments
 args = Args()
