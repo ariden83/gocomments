@@ -454,9 +454,362 @@ with generate a dataset file such as :
 
 ##### 2) Generate a new model
 
-Generate a new model from your previous dataset file
+Generate a new model from your previous dataset file.
 
 > make generate-model
+
+##### 3) Test a model
+
+It is possible to test the final model or the different versions of temporary models created.
+
+> make generate-api
+
+Example of automatically generated comment
+
+```
+go-tf-app_1  | #########################
+go-tf-app_1  | QUERY: func NewColor(c unknown) (Color)
+go-tf-app_1  | #########################
+go-tf-app_1  | ORIGINAL:
+go-tf-app_1  | NewColor compute the ANSI color string according to the given list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 16819 ms) with version 1 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to its category
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 17100 ms) with version 2 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to its display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 19073 ms) with version 3 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to an optional list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 17545 ms) with version 4 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to a list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 17401 ms) with version 5 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 16261 ms) with version 6 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to its display name.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 16341 ms) with version 7 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to its display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 16968 ms) with version 8 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to given list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 18506 ms) with version 9 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to provided list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 17943 ms) with version 10 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to given list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | QUERY: func (c Color) String(s string) (string)
+go-tf-app_1  | #########################
+go-tf-app_1  | ORIGINAL:
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14601 ms) with version 1 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14316 ms) with version 2 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 12927 ms) with version 3 of model
+go-tf-app_1  | String returns the given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14214 ms) with version 4 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13832 ms) with version 5 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14624 ms) with version 6 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13525 ms) with version 7 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 15110 ms) with version 8 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13433 ms) with version 9 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14504 ms) with version 10 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | QUERY: func (c Color) Stringf(format string, a unknown) (string)
+go-tf-app_1  | #########################
+go-tf-app_1  | ORIGINAL:
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 12685 ms) with version 1 of model
+go-tf-app_1  | Stringf is the Sprintf method.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13094 ms) with version 2 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14865 ms) with version 3 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14729 ms) with version 4 of model
+go-tf-app_1  | Stringf is the colorized version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14379 ms) with version 5 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14649 ms) with version 6 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14015 ms) with version 7 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13884 ms) with version 8 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14316 ms) with version 9 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14110 ms) with version 10 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | QUERY: func NewColor(c unknown) (Color)
+go-tf-app_1  | #########################
+go-tf-app_1  | ORIGINAL:
+go-tf-app_1  | NewColor compute the ANSI color string according to the given list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 15172 ms) with version 1 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to its category
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 16847 ms) with version 2 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to its display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 17914 ms) with version 3 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to an optional list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 17731 ms) with version 4 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to a list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 19750 ms) with version 5 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 18197 ms) with version 6 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to its display name.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 16940 ms) with version 7 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to its display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 18295 ms) with version 8 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to given list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 17988 ms) with version 9 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to provided list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 16900 ms) with version 10 of model
+go-tf-app_1  | NewColor compute the ANSI color string according to given list of display attributes.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | QUERY: func (c Color) String(s string) (string)
+go-tf-app_1  | #########################
+go-tf-app_1  | ORIGINAL:
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13104 ms) with version 1 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13916 ms) with version 2 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13803 ms) with version 3 of model
+go-tf-app_1  | String returns the given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13788 ms) with version 4 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14484 ms) with version 5 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13716 ms) with version 6 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14357 ms) with version 7 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14453 ms) with version 8 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13670 ms) with version 9 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14892 ms) with version 10 of model
+go-tf-app_1  | String returned the colorized given string.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | QUERY: func (c Color) Stringf(format string, a unknown) (string)
+go-tf-app_1  | #########################
+go-tf-app_1  | ORIGINAL:
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13168 ms) with version 1 of model
+go-tf-app_1  | Stringf is the Sprintf method.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14263 ms) with version 2 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 14317 ms) with version 3 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 18980 ms) with version 4 of model
+go-tf-app_1  | Stringf is the colorized version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 16932 ms) with version 5 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 15432 ms) with version 6 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 16442 ms) with version 7 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 16261 ms) with version 8 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 15585 ms) with version 9 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 16498 ms) with version 10 of model
+go-tf-app_1  | Stringf is the Sprintf version of String.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | QUERY: func ReadTargetStream(r io.Reader, processTargetFunc func) (error)
+go-tf-app_1  | #########################
+go-tf-app_1  | ORIGINAL:
+go-tf-app_1  | ReadTargetStream reads the given proto stream and call the given callback for each target.
+go-tf-app_1  | Stop and return the first occurred error.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 18890 ms) with version 1 of model
+go-tf-app_1  | ReadTargetStream reads the io.Reader and returns an error if one is not found
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 18363 ms) with version 2 of model
+go-tf-app_1  | ReadTargetStream reads the given io.reader and call bdd-proc
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 20142 ms) with version 3 of model
+go-tf-app_1  | ReadTargetStream reads the given reader to process all target produced by this handler.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 19615 ms) with version 4 of model
+go-tf-app_1  | ReadTargetStream reads the given stream reader and call a process to read data from it.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 15467 ms) with version 5 of model
+go-tf-app_1  | WriteTargetStream calls the given function for each target.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 76219 ms) with version 6 of model
+go-tf-app_1  | ReadTargetStream reads the given stream and call
+go-tf-app_1  | the process for each target of a specific file. If no error occurs, returns nil otherwise to allow execution that will return an err where errors on read is not valid or if there's any occurred in this function can be used by another handler instead it would execute at init with status "read" method from here until end date has already been done source (mockedor) use stderr as temporary data does nothing right now but ignore some events were added into main object then do something else we should stop processing through more than one second since last tag could't go further even though you
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 15736 ms) with version 7 of model
+go-tf-app_1  | ReadTargetStream reads the given stream.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 61143 ms) with version 8 of model
+go-tf-app_1  | ReadTargetStream reads target stream and call the given callback for eachtarget.
+go-tf-app_1  | Stop will return an error in case of failure to reach a transaction from ewallet-streamer service as might loop can then stop if there's any problem starting here until no one occurred during all process, we cannot wait io has ended or is not yet closed (either by end) processing go routine which may be called at least once per user creation time between runsners serveing them beforehand inside this client fetcher otherwise it creates
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 70297 ms) with version 9 of model
+go-tf-app_1  | ReadTargetStream reads the given proto stream and call a target function for eachtarget of it.
+go-tf-app_1  | Stopand return an error if one occurred while reading or unzipped by any issues, otherwise returns nil even when there was no more errors in case we can't process all files are blocked using io on incoming connections instead to serve http server right now but not handled yet resolved file content at user end... last modification found inside this topic: It's used with either `StartWithStaticMemory()` optionor` method which trigger only handles first encounteredError object here (no-premium id). If
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 16349 ms) with version 10 of model
+go-tf-app_1  | ReadTargetStream reads the given proto stream and call a function
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | QUERY: func (f *FilesetEntry_SymlinkBehavior) UnmarshalJSON(b []byte) (error)
+go-tf-app_1  | #########################
+go-tf-app_1  | ORIGINAL:
+go-tf-app_1  | Deprecated: Do not use.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 15920 ms) with version 1 of model
+go-tf-app_1  | Deprecated: Use FilesetEntry_SymlinkBehavior.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13351 ms) with version 2 of model
+go-tf-app_1  | Deprecated: Do not use.
+go-tf-app_1  | 
+go-tf-app_1  | #########################
+go-tf-app_1  | GENERATED (took 13671 ms) with version 3 of model
+go-tf-app_1  | Deprecated: Do not use.
+go-tf-app_1  | 
+```
+
 
 ## Resources
 

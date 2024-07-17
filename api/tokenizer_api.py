@@ -61,7 +61,7 @@ def run_predict(args, query, version):
     # inference
     generated_code = model.generate(
         encoded_text["input_ids"], attention_mask=encoded_text["attention_mask"],
-        max_length=args.max_target_length, top_p=0.95, top_k=50, repetition_penalty=2, num_return_sequences=1
+        max_length=args.max_target_length, top_p=0.95, top_k=50, repetition_penalty=2.0, num_return_sequences=1
     )
 
     # decode generated tokens
