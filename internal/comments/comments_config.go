@@ -28,6 +28,7 @@ type CommentConfig struct {
 	// Allows you to know if you update the tagged comments each time the script is executed.
 	UpdateComments bool            `yaml:"update-comments"`
 	ActiveExamples bool            `yaml:"active-examples"`
+	LocalAI        LocalAIConfig   `yaml:"localai"`
 	OpenAI         OpenAIConfig    `yaml:"openai"`
 	Anthropic      AnthropicConfig `yaml:"anthropic"`
 }
@@ -40,26 +41,43 @@ func (cfg *CommentConfig) Merge(newCfg *CommentConfig) *CommentConfig {
 	if newCfg.Local != "" {
 		cfg.Local = newCfg.Local
 	}
-	if newCfg.OpenAI.Active != nil {
-		cfg.OpenAI.Active = newCfg.OpenAI.Active
-	}
 	if newCfg.Signature != nil {
 		cfg.Signature = newCfg.Signature
 	}
-	if newCfg.OpenAI.Active != nil {
-		cfg.OpenAI.Active = newCfg.OpenAI.Active
+
+	{
+		cfg.LocalAI.URL = "http://tokenizer_container:5000"
+		cfg.LocalAI.APIModelVersion = 10
+		if newCfg.LocalAI.Active != nil {
+			cfg.LocalAI.Active = newCfg.LocalAI.Active
+		}
+		if newCfg.LocalAI.APIModelVersion != 0 {
+			cfg.LocalAI.APIModelVersion = newCfg.LocalAI.APIModelVersion
+		}
+		if newCfg.LocalAI.URL != "" {
+			cfg.LocalAI.URL = newCfg.LocalAI.URL
+		}
 	}
-	if newCfg.OpenAI.APIKey != nil {
-		cfg.OpenAI.APIKey = newCfg.OpenAI.APIKey
+
+	{
+		if newCfg.OpenAI.Active != nil {
+			cfg.OpenAI.Active = newCfg.OpenAI.Active
+		}
+		if newCfg.OpenAI.APIKey != nil {
+			cfg.OpenAI.APIKey = newCfg.OpenAI.APIKey
+		}
+		if newCfg.OpenAI.URL != "" {
+			cfg.OpenAI.URL = newCfg.OpenAI.URL
+		}
 	}
-	if newCfg.OpenAI.URL != "" {
-		cfg.OpenAI.URL = newCfg.OpenAI.URL
-	}
-	if newCfg.Anthropic.Active != nil {
-		cfg.Anthropic.Active = newCfg.Anthropic.Active
-	}
-	if newCfg.Anthropic.URL != "" {
-		cfg.Anthropic.URL = newCfg.Anthropic.URL
+
+	{
+		if newCfg.Anthropic.Active != nil {
+			cfg.Anthropic.Active = newCfg.Anthropic.Active
+		}
+		if newCfg.Anthropic.URL != "" {
+			cfg.Anthropic.URL = newCfg.Anthropic.URL
+		}
 	}
 	return cfg
 }

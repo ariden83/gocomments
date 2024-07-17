@@ -39,6 +39,10 @@ generate-test:
 	$(DOCKER_COMPOSE) ./test-models/docker-compose.yml $(DOCKER_LOGS) go-tf-app
 
 generate-api:
+	$(DOCKER_COMPOSE) ./api/docker-compose.yml -p api $(DOCKER_DOWN)
+	$(DOCKER_COMPOSE) ./api/docker-compose.yml -p api $(DOCKER_BUILD) # --no-cache
+	$(DOCKER_COMPOSE) ./api/docker-compose.yml -p api $(DOCKER_UP) # --build
+	$(DOCKER_COMPOSE) ./api/docker-compose.yml -p api $(DOCKER_LOGS) create
 
 # convert-model:
 #	pip install tf2onnx
@@ -47,4 +51,4 @@ generate-api:
 #	chmod -R 755 onnx
 
 install:
-	sudo go install ./
+	go install ./
