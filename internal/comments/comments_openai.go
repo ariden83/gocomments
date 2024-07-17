@@ -8,8 +8,9 @@ import (
 	"go/ast"
 	"io"
 	"log"
-	"moul.io/http2curl"
 	"net/http"
+
+	"moul.io/http2curl"
 )
 
 type OpenAIConfig struct {

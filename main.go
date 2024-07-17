@@ -5,7 +5,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/ariden/gocomments/internal/comments"
 	"io"
 	"io/fs"
 	"os"
@@ -13,6 +12,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"github.com/ariden/gocomments/internal/comments"
 )
 
 func main() {

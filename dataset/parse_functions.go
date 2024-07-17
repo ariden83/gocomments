@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ariden/gocomments/internal/comments"
 	"go/ast"
 	"go/parser"
 	"go/token"
 	"os"
 	"strings"
+
+	"github.com/ariden/gocomments/internal/comments"
 )
 
 type FunctionInfo struct {
