@@ -4,6 +4,10 @@
 
 `gocomments` is a tool to update to automatically adding comments to go functions and variables to code such as
 
+By default, it does not use AI, but it is also possible to generate your own AI from an existing GOLANG repo.
+
+**Example :**
+
 ```go
 package main
 
