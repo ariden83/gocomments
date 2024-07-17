@@ -418,24 +418,27 @@ update-comments: false
 # Allows to add examples in comments.
 active-examples: false
 
+localai:
 # Do we use local AI to generate function comments
-localai-active: false
+  active: false
 # If local-active is active, set your local api URL. 
-localai-url: "http://tokenizer_container:5000"
+  url: "http://tokenizer_container:5000"
 # defined the version of the model to use. 
-localai-api_model_version: 10
+  api_model_version: 10
 
+openai:
 # Do we use OPENAI to generate function comments
-openai-active: false
+  active: false
 # If openai-active is active, set your OPENAI api key. 
-openai-api_key: ""
+  api_key: ""
 # If openai-active is active, set your OPENAI api URL. 
-openai-url: "https://api.openai.com/v1/chat/completions"
+  url: "https://api.openai.com/v1/chat/completions"
 
+anthropic:
 # Do we use Anthropic Claude to generate function comments
-anthropic-active: false
+  active: false
 # If anthropic-active is active, set the anthropic api URL. 
-anthropic-url: "https://api.anthropic.com/v1/complete"
+  url: "https://api.anthropic.com/v1/complete"
 ```
 
 ### Generate comments using our own private AI
