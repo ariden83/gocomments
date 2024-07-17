@@ -3,10 +3,11 @@ package comments
 import (
 	"bufio"
 	"errors"
-	yaml "gopkg.in/yaml.v3"
 	"os"
 	"path/filepath"
 	"regexp"
+
+	yaml "gopkg.in/yaml.v3"
 )
 
 // CommentConfig is the configuration to sort all comments.

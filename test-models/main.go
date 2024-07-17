@@ -9,12 +9,16 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
 
 type Prompt struct {
 	currentModelVersion int
+	datasetDirectory    string
+	datasetPrefix       string
+	datasetExtension    string
 }
 
 type Record struct {
@@ -25,6 +29,9 @@ type Record struct {
 func main() {
 	p := Prompt{
 		currentModelVersion: 10,
+		datasetDirectory:    "/app/dataset/",
+		datasetPrefix:       "functions_dataset",
+		datasetExtension:    ".jsonl",
 	}
 
 	if err := p.predictFromDataset(); err != nil {
@@ -32,8 +39,39 @@ func main() {
 	}
 }
 
+func (p *Prompt) getLastDatasetFile() (string, error) {
+	files, err := ioutil.ReadDir(p.datasetDirectory)
+	if err != nil {
+		return "", err
+	}
+
+	var latestFile string
+	var latestTime time.Time
+
+	for _, file := range files {
+		if !file.IsDir() && strings.HasPrefix(file.Name(), p.datasetPrefix) && strings.HasSuffix(file.Name(), p.datasetExtension) {
+			fileTime := file.ModTime()
+			if fileTime.After(latestTime) {
+				latestTime = fileTime
+				latestFile = file.Name()
+			}
+		}
+	}
+
+	if latestFile == "" {
+		return "", fmt.Errorf("no dataset files found in directory %s with prefix %s and extension %s", p.datasetDirectory, p.datasetPrefix, p.datasetExtension)
+	}
+
+	return filepath.Join(p.datasetDirectory, latestFile), nil
+}
+
 func (p *Prompt) predictFromDataset() error {
-	file, err := os.Open("/app/dataset/functions_dataset_20240624_12.jsonl")
+	latestFile, err := p.getLastDatasetFile()
+	if err != nil {
+		return fmt.Errorf("could not get latest dataset file: %v", err)
+	}
+
+	file, err := os.Open(latestFile)
 	if err != nil {
 		return err
 	}
@@ -43,8 +81,8 @@ func (p *Prompt) predictFromDataset() error {
 		}
 	}()
 
-	start := 22240
-	limit := start + 20
+	start := 0
+	limit := start + 50
 	i := 0
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
