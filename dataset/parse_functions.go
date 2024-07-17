@@ -18,12 +18,13 @@ type FunctionInfo struct {
 }
 
 // Mots-clés à ignorer dans les commentaires
-var keywordsToIgnore = []string{"FIXME", "NOTE", "go:embed", "TODO", "BUG", "deprecated"}
+var keywordsToIgnore = []string{"fixme", "note", "go:embed", "todo", "bug", "deprecated"}
 
 // Fonction pour vérifier si un commentaire contient l'un des mots-clés interdits.
 func containsIgnoredKeywords(comment string) bool {
+	lowerComment := strings.ToLower(comment)
 	for _, keyword := range keywordsToIgnore {
-		if strings.Contains(comment, keyword) {
+		if strings.Contains(lowerComment, keyword) {
 			return true
 		}
 	}

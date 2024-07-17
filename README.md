@@ -363,11 +363,7 @@ func HasPermission(user string) bool {
 
 Command to generate the binary :
 
-> make build
-
-```shell
-$ go install ./
-```
+> make install
 
 ## Usage
 
@@ -380,6 +376,12 @@ Usage: gocomments [flags] [path ...]
   -prefix value
     	relative local prefix to from a new import group (can be given several times)
   -w	write result to (source) file instead of stdout
+```
+
+example : 
+
+```shell
+gocomments -l -w  ./test/.
 ```
 
 By default, `gocomments` will search the module name from the root go.mod file as local import path.
@@ -411,14 +413,25 @@ signature: "AutoComBOT"
 update-comments: false
 # Allows to add examples in comments.
 active-examples: false
+
+# Do we use local AI to generate function comments
+localai-active: false
+# If local-active is active, set your local api URL. 
+localai-url: "http://tokenizer_container:5000"
+# defined the version of the model to use. 
+localai-api_model_version: 10
+
 # Do we use OPENAI to generate function comments
 openai-active: false
 # If openai-active is active, set your OPENAI api key. 
 openai-api_key: ""
 # If openai-active is active, set your OPENAI api URL. 
 openai-url: "https://api.openai.com/v1/chat/completions"
+
 # Do we use Anthropic Claude to generate function comments
 anthropic-active: false
+# If anthropic-active is active, set the anthropic api URL. 
+anthropic-url: "https://api.anthropic.com/v1/complete"
 ```
 
 ## In progress

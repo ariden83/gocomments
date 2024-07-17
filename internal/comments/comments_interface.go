@@ -19,6 +19,13 @@ func newProcessor(cfg *CommentConfig) commentsProcess {
 		}
 	}
 
+	localAIProcess := localAI{
+		LocalAIConfig: cfg.LocalAI,
+	}
+	if localAIProcess.isActive() {
+		return &localAIProcess
+	}
+
 	openAIProcess := openAI{
 		OpenAIConfig: cfg.OpenAI,
 	}
