@@ -914,13 +914,13 @@ func GetEventStatus(eventID string, status string) error {
 	return nil
 }
 
-// SetEventStatus set the given event ID and status
+// SetEventStatus set the given event ID and status.
 func SetEventStatus(eventID string, status string) error {
 
 	return nil
 }
 
-// myLongRunningProcess will return the error produced by my-exit_processor
+// myLongRunningProcess will return the error produced by my-exit_processor.
 func myLongRunningProcess(ctx context.Context) error {
 	for {
 		select {
@@ -987,15 +987,15 @@ type Test struct {
 // remaining files in a test. It is set by calling "time" package, so no one can continue even if invalid query params are given (fallback strategy)).
 func (t Test) Tota()	{}
 
-// Totbczzsd is a method to define the technicals around geopoint
+// Totbczzsd is a method to define the technicals around geopoint.
 func Totbczzsd()	{}
 
-// Totc returns a token from test
+// Totc returns a token from test.
 func (t Test) Totc(ctx context.Context, value string) (string, error) {
 	return "test", nil
 }
 
-// Totd handle GET request to talentview
+// Totd handle GET request to talentview.
 func Totd(ctx context.Context, value string) (string, error) {
 	return "test", nil
 }

@@ -98,8 +98,15 @@ func (o *localAI) callLocalAI(functionCode string) (string, error) {
 }
 
 // addDoubleSlash adds "// " at the beginning of each line in the input string.
+// // If the last line is empty, it will not add the prefix and will not keep it.
+// // Additionally, it adds a period at the end of the last line if it does not already have one..
 func addDoubleSlash(input string) string {
 	input = strings.TrimSuffix(input, "\n")
+
+	if !strings.HasSuffix(input, ".") {
+		input += "."
+	}
+
 	// Split the input string by newlines to get each line separately.
 	lines := strings.Split(input, "\n")
 
