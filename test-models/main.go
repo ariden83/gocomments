@@ -43,11 +43,15 @@ func (p *Prompt) predictFromDataset() error {
 		}
 	}()
 
-	limit := 100
+	start := 22240
+	limit := start + 20
 	i := 0
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		i++
+		if i < start {
+			continue
+		}
 		if i > limit {
 			break
 		}

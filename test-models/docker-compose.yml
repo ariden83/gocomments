@@ -6,7 +6,7 @@ services:
     image: tokenizer_image
     volumes:
       - ../runs:/workspace/runs
-      - .:/app/scripts
+      - ../api:/app/scripts
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
