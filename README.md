@@ -66,10 +66,11 @@ localai:
 # Do we use local AI to generate function comments
   active: false
 # If local-active is active, set your local api URL. 
-  url: "http://tokenizer_container:5000"
+  url: "http://:5000"
 # defined the version of the model to use. 
   api_model_version: 10
 
+# do not use openai yet
 openai:
 # Do we use OPENAI to generate function comments
   active: false
@@ -78,6 +79,7 @@ openai:
 # If openai-active is active, set your OPENAI api URL. 
   url: "https://api.openai.com/v1/chat/completions"
 
+# do not use anthropic yet
 anthropic:
 # Do we use Anthropic Claude to generate function comments
   active: false
