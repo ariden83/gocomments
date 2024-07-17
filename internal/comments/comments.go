@@ -363,6 +363,7 @@ func (file *file) commentFunc(genDecl *ast.FuncDecl) error {
 	if genDecl.Doc.Text() == "" && genDecl.Name.Name != "main" && genDecl.Name.Name != "init" {
 		txt, err := file.processor.commentFunc(genDecl)
 		if err != nil {
+			log.Printf("fail to generate comment for func %s: %+v", genDecl.Name.Name, err)
 			return err
 		}
 		txt += file.addSignature()

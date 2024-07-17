@@ -46,8 +46,8 @@ func (cfg *CommentConfig) Merge(newCfg *CommentConfig) *CommentConfig {
 	}
 
 	{
-		cfg.LocalAI.URL = "http://tokenizer_container:5000"
-		cfg.LocalAI.APIModelVersion = 10
+		cfg.LocalAI.URL = "http://:5000"
+
 		if newCfg.LocalAI.Active != nil {
 			cfg.LocalAI.Active = newCfg.LocalAI.Active
 		}
@@ -79,6 +79,7 @@ func (cfg *CommentConfig) Merge(newCfg *CommentConfig) *CommentConfig {
 			cfg.Anthropic.URL = newCfg.Anthropic.URL
 		}
 	}
+
 	return cfg
 }
 

@@ -4,7 +4,7 @@
 
 `gocomments` is a tool to update to automatically adding comments to go functions and variables to code such as
 
-```
+```go
 package main
 
 import (
@@ -137,7 +137,7 @@ func HasPermission(user string) bool {
 
 to give this result
 
-```
+```go
 package main
 
 import (
@@ -822,6 +822,216 @@ go-tf-app_1  | GENERATED (took 13671 ms) with version 3 of model
 go-tf-app_1  | Deprecated: Do not use.
 go-tf-app_1  | 
 ```
+
+##### 4) Launch API
+
+Launches the API to use the created models to generate a comment.
+
+> make generate-api
+
+The API will be accessible via an HTTP call on the following URL
+
+> http://localhost:5000
+
+such as
+
+> http://localhost:5000/ping
+
+
+##### 5) Generate your first comments via your generated AI 
+
+Create an .env file such as in your repo in the file for which you want to generate comments:
+
+example in your **./test** folder
+
+```shell
+prefixes:
+  - "common"
+signature: ""
+update-comments: false
+
+localai:
+    active: true
+    url: "http://:5000"
+    api_model_version: 10
+
+openai:
+    active: false
+    api_key: ""
+    url: ""
+```
+
+and run 
+
+> gocomments -l -w  ./test/. 
+
+you will have : 
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+)
+
+// openaiAPIURL is a private constant that indicates the endpoint URL for accessing to openai api.
+const openaiAPIURL = "https://api.openai.com/v1/engines/davinci-codex/completions"
+
+func init() {
+	fmt.Println("Init func")
+}
+
+// InitDatabase  creates a new database for all ATS ads.
+func InitDatabase()	{}
+
+func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigCh
+		cancel()
+	}()
+
+	go myLongRunningProcess(ctx)
+
+	<-ctx.Done()
+
+	fmt.Println("Processus terminé ou interrompu.")
+}
+
+// GetEventStatus retrieves the status of a specific event.
+func GetEventStatus(eventID string, status string) error {
+
+	return nil
+}
+
+// SetEventStatus set the given event ID and status
+func SetEventStatus(eventID string, status string) error {
+
+	return nil
+}
+
+// myLongRunningProcess will return the error produced by my-exit_processor
+func myLongRunningProcess(ctx context.Context) error {
+	for {
+		select {
+		case <-ctx.Done():
+
+			fmt.Println("Processus annulé.")
+			return nil
+		default:
+			time.Sleep(1 * time.Second)
+		}
+	}
+}
+
+// toto is a type alias for the int type.
+// It allows you to create a new type with the same
+// underlying type as int, but with a different name.
+// This can be useful for improving code readability
+// and providing more semantic meaning to your types.
+type toto int
+
+// tata is a type alias for the toto type.
+// It allows you to create a new type with the same
+// underlying type as int, but with a different name.
+// This can be useful for improving code readability
+// and providing more semantic meaning to your types.
+type tata toto
+
+var (
+	// Var1 is a variable of type int.
+	Var1	int
+
+	// Var2 is a variable of type string.
+	Var2	string
+
+	// Var3 is a variable of type toto.
+	Var3	toto
+)
+
+// Var4 is a variable of type string..
+var Var4 string
+
+// var5 is a private variable of type string..
+var var5 string
+
+// var6 is a private constant.
+const var6 = "tata"
+
+// Var7 is a constant.
+const Var7 = "toto"
+
+// Test represents a structure for 
+// It contains information about a Key, a KeyB, a KeyC, a private keyg and
+// optionally a KeyD, a KeyE.
+type Test struct {
+	Key	string
+	KeyB	int
+	KeyC	toto
+	KeyD	*toto
+	KeyE	*int
+	keyg	bool
+}
+
+// Quota returns the difference of all
+// remaining files in a test. It is set by calling "time" package, so no one can continue even if invalid query params are given (fallback strategy)).
+func (t Test) Tota()	{}
+
+// Totbczzsd is a method to define the technicals around geopoint
+func Totbczzsd()	{}
+
+// Totc returns a token from test
+func (t Test) Totc(ctx context.Context, value string) (string, error) {
+	return "test", nil
+}
+
+// Totd handle GET request to talentview
+func Totd(ctx context.Context, value string) (string, error) {
+	return "test", nil
+}
+
+// Config represents a structure for .
+type Config struct {
+}
+
+// Adapter represents a structure for .
+type Adapter struct {
+}
+
+// New creates a new AWS S3 adapter.
+func New(config Config, logger log.Logger) (Adapter, error) {
+
+	var5 = "toto"
+	Var4 = "tata"
+	Var1 = 1
+	Var2 = "test"
+	Var3 = 1
+	u := tata(5)
+	log.Printf("%s %s %d", var6, Var7, u)
+	return Adapter{}, nil
+}
+
+// IsValid verify if the token is valid.
+func IsValid(token string) bool {
+	return true
+}
+
+// HasPermission checks if the user has a permission.
+func HasPermission(user string) bool {
+	return true
+}
+```
+
 
 
 ## Resources
