@@ -434,11 +434,7 @@ anthropic-active: false
 anthropic-url: "https://api.anthropic.com/v1/complete"
 ```
 
-## In progress
-
-#### A) Generate comments using [Open AI](https://openai.com/index/introducing-chatgpt-and-whisper-apis/)
-#### B) Generate comments using [AWS AI](https://aws.amazon.com/fr/ai/)
-#### C) Generate comments using our own private AI
+### Generate comments using our own private AI
 
 ##### 1) Generate dataset file :
 
@@ -1032,7 +1028,10 @@ func HasPermission(user string) bool {
 }
 ```
 
+## In progress
 
+#### A) Generate comments using [Open AI](https://openai.com/index/introducing-chatgpt-and-whisper-apis/)
+#### B) Generate comments using [AWS AI](https://aws.amazon.com/fr/ai/)
 
 ## Resources
 
