@@ -7,14 +7,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 	"strings"
 	"time"
 )
 
-type Prompt struct{}
+type Prompt struct {
+	currentModelVersion int
+}
 
 type Record struct {
 	Text   string `json:"name"`
@@ -22,7 +23,9 @@ type Record struct {
 }
 
 func main() {
-	p := Prompt{}
+	p := Prompt{
+		currentModelVersion: 10,
+	}
 
 	if err := p.predictFromDataset(); err != nil {
 		log.Fatalf("fail to predict from dataset: %v", err)
@@ -40,42 +43,43 @@ func (p *Prompt) predictFromDataset() error {
 		}
 	}()
 
-	var records []Record
+	limit := 100
+	i := 0
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
+		i++
+		if i > limit {
+			break
+		}
 		line := scanner.Text()
 		var record Record
 		if err := json.Unmarshal([]byte(line), &record); err != nil {
 			log.Printf("error deserializing the row: %v", err)
 			continue
 		}
-		records = append(records, record)
+
+		fmt.Println(strings.Repeat("#", 25))
+		fmt.Println("QUERY:", record.Text)
+		fmt.Println(strings.Repeat("#", 25))
+		fmt.Println("ORIGINAL:")
+		fmt.Println(record.Result)
+
+		j := 1
+		for j <= p.currentModelVersion {
+			start := time.Now()
+			commentPredicted, err := p.runPredict(record.Text, j)
+			if err != nil {
+				return err
+			}
+			elapsed := time.Since(start) //
+			fmt.Println(strings.Repeat("#", 25))
+			fmt.Println(fmt.Sprintf("GENERATED (took %d ms) with version %d of model", elapsed.Milliseconds(), j))
+			fmt.Println(commentPredicted)
+			j++
+		}
 	}
 
-	if err := scanner.Err(); err != nil {
-		return err
-	}
-
-	rand.Seed(time.Now().UnixNano())
-	index := rand.Intn(len(records))
-	text := records[index].Text
-	commentOriginal := records[index].Result
-
-	commentPredicted, err := p.runPredict(text)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(strings.Repeat("#", 25))
-	fmt.Println("QUERY:", text)
-	fmt.Println(strings.Repeat("#", 25))
-	fmt.Println("ORIGINAL:")
-	fmt.Println(commentOriginal)
-	fmt.Println(strings.Repeat("#", 25))
-	fmt.Println("GENERATED:")
-	fmt.Println(commentPredicted)
-
-	return nil
+	return scanner.Err()
 }
 
 type TokenizeRequest struct {
@@ -87,10 +91,10 @@ type TokenizeResponse struct {
 	Comment string `json:"comment"`
 }
 
-func (p *Prompt) runPredict(text string) (string, error) {
+func (p *Prompt) runPredict(text string, version int) (string, error) {
 	requestBody, err := json.Marshal(TokenizeRequest{
 		Text:    text,
-		Version: 9,
+		Version: version,
 	})
 	if err != nil {
 		return "", err
@@ -114,7 +118,11 @@ func (p *Prompt) runPredict(text string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Printf("fail to close reponse: %+v", err)
+		}
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("failed to call tokenizer API: status code %d", resp.StatusCode)
