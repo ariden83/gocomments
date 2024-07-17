@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -59,13 +60,13 @@ func (o *localAI) callLocalAI(functionCode string) (string, error) {
 	for {
 		resp, err := http.Get(o.URL + "/ping")
 		if err != nil {
+			log.Printf("fail to ping tokenizer API: %+v", err)
 			time.Sleep(1 * time.Second)
 			continue
 		}
 		if resp.StatusCode == http.StatusOK {
 			break
 		}
-		log.Printf("wait initiliazation of tokenizer_container")
 		time.Sleep(10 * time.Second)
 	}
 
@@ -93,7 +94,22 @@ func (o *localAI) callLocalAI(functionCode string) (string, error) {
 		return "", err
 	}
 
-	return tokenizeResponse.Comment, nil
+	return addDoubleSlash(tokenizeResponse.Comment), nil
+}
+
+// addDoubleSlash adds "// " at the beginning of each line in the input string.
+func addDoubleSlash(input string) string {
+	input = strings.TrimSuffix(input, "\n")
+	// Split the input string by newlines to get each line separately.
+	lines := strings.Split(input, "\n")
+
+	// Loop through each line and prepend "// " to it.
+	for i, line := range lines {
+		lines[i] = "// " + line
+	}
+
+	// Join the modified lines back together with newlines.
+	return strings.Join(lines, "\n")
 }
 
 func (o *localAI) commentConst(name string, exported bool) (string, error) {

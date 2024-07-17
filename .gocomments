@@ -3,13 +3,16 @@ prefixes:
 signature: "AutoComBOT"
 update-comments: false
 
-localai-active: false
-localai-url: "http://tokenizer_container:5000"
-localai-api_model_version: 10
+localai:
+    active: false
+    url: "http://:5000"
+    api_model_version: 10
 
-openai-active: false
-openai-api_key: ""
-openai-url: "https://api.openai.com/v1/chat/completions"
+openai:
+    active: false
+    api_key: ""
+    url: "https://api.openai.com/v1/chat/completions"
 
-anthropic-active: false
-anthropic-url: "https://api.anthropic.com/v1/complete"
+anthropic:
+    active: false
+    url: "https://api.anthropic.com/v1/complete"

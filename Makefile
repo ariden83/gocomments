@@ -25,12 +25,6 @@ generate-model:
 	$(DOCKER_COMPOSE) ./model/docker-compose.yml -p model $(DOCKER_UP) # --build
 	$(DOCKER_COMPOSE) ./model/docker-compose.yml -p model $(DOCKER_LOGS) create
 
-# generate-from-checkpoint:
-#	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_DOWN)
-#	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_BUILD) # --no-cache
-#	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_UP) # --build
-#	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_LOGS) create
-
 generate-test:
 	cd ./test-models && go mod tidy && go mod vendor
 	$(DOCKER_COMPOSE) ./test-models/docker-compose.yml $(DOCKER_DOWN)
@@ -42,7 +36,7 @@ generate-api:
 	$(DOCKER_COMPOSE) ./api/docker-compose.yml -p api $(DOCKER_DOWN)
 	$(DOCKER_COMPOSE) ./api/docker-compose.yml -p api $(DOCKER_BUILD) # --no-cache
 	$(DOCKER_COMPOSE) ./api/docker-compose.yml -p api $(DOCKER_UP) # --build
-	$(DOCKER_COMPOSE) ./api/docker-compose.yml -p api $(DOCKER_LOGS) create
+	$(DOCKER_COMPOSE) ./api/docker-compose.yml -p api $(DOCKER_LOGS) tokenizer
 
 # convert-model:
 #	pip install tf2onnx
