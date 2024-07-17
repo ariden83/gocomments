@@ -54,9 +54,9 @@ def list_go_files(directory):
     try:
         directory_path = Path(directory)
         if not directory_path.exists():
-            raise FileNotFoundError(f"Le répertoire {directory} n'existe pas.")
+            raise FileNotFoundError(f"Directory {directory} does not exist")
         if not directory_path.is_dir():
-            raise NotADirectoryError(f"{directory} n'est pas un répertoire.")
+            raise NotADirectoryError(f"{directory} is not a directory")
 
         exclude_patterns = ['_test.go', '_example.go']
 

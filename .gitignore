@@ -11,3 +11,7 @@ api/myapp
 runs-backup
 saved_model
 runs-v2
+api/dataset
+api/models
+test-models/dataset
+test-models/models

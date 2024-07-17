@@ -31,12 +31,14 @@ generate-model:
 #	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_UP) # --build
 #	$(DOCKER_COMPOSE) ./model-from-checkpoint/docker-compose.yml -p model-from-checkpoint $(DOCKER_LOGS) create
 
+generate-test:
+	cd ./test-models && go mod tidy && go mod vendor
+	$(DOCKER_COMPOSE) ./test-models/docker-compose.yml $(DOCKER_DOWN)
+	$(DOCKER_COMPOSE) ./test-models/docker-compose.yml $(DOCKER_BUILD) # --no-cache
+	$(DOCKER_COMPOSE) ./test-models/docker-compose.yml $(DOCKER_UP) # --build
+	$(DOCKER_COMPOSE) ./test-models/docker-compose.yml $(DOCKER_LOGS) go-tf-app
+
 generate-api:
-	cd ./api && go mod tidy && go mod vendor
-	$(DOCKER_COMPOSE) ./api/docker-compose.yml $(DOCKER_DOWN)
-	$(DOCKER_COMPOSE) ./api/docker-compose.yml $(DOCKER_BUILD) # --no-cache
-	$(DOCKER_COMPOSE) ./api/docker-compose.yml $(DOCKER_UP) # --build
-	$(DOCKER_COMPOSE) ./api/docker-compose.yml $(DOCKER_LOGS) go-tf-app
 
 # convert-model:
 #	pip install tf2onnx

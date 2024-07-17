@@ -458,11 +458,11 @@ Generate a new model from your previous dataset file.
 
 > make generate-model
 
-##### 3) Test a model
+##### 3) Test models
 
 It is possible to test the final model or the different versions of temporary models created.
 
-> make generate-api
+> make generate-test
 
 Example of automatically generated comment
 
