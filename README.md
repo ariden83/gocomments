@@ -38,7 +38,7 @@ We can add a `.gocomments` file in an intermediate directory to override the con
 for all subdirectories of this path. The final configuration to process a file is computed
 with all intermediate configuration files.
 
-The file follow the format of this example below:
+The file `.gocomments` follow the format of this example below:
 
 ```yaml
 ---
@@ -66,7 +66,7 @@ localai:
 # Do we use local AI to generate function comments
   active: false
 # If local-active is active, set your local api URL. 
-  url: "http://:5000"
+  url: "://:5000"
 # defined the version of the model to use. 
   api_model_version: 10
 
@@ -470,6 +470,16 @@ with generate a dataset file such as :
         "comment": "NewGetParcelWithEventsFunc creates a new GetParcelWithEventsFunc.\n"
     }]
 ```
+
+**Note:** 
+
+GitHub offers an advanced search feature that can be used to find Go projects. You can refine your search to find popular or well-starred projects, which can often indicate good code quality.
+
+Go to [GitHub Advanced Search](https://github.com/search/advanced).
+
+- Under "Languages", select "Go".
+- Under "Stars" you can enter a minimum to filter out more popular projects, for example, >100.
+- In the "*In this repository*" field, you can enter comments to find projects that mention comments.
 
 ##### 2) Generate a new model
 

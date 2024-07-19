@@ -144,7 +144,7 @@ func (p *Prompt) runPredict(text string, version int) (string, error) {
 
 	// Vérifier que le conteneur est en cours d'exécution
 	for {
-		resp, err := http.Get("http://tokenizer_container:5000/ping")
+		resp, err := http.Get("://:5000/ping")
 		if err != nil {
 			time.Sleep(1 * time.Second)
 			continue
@@ -156,7 +156,7 @@ func (p *Prompt) runPredict(text string, version int) (string, error) {
 		time.Sleep(10 * time.Second)
 	}
 
-	resp, err := http.Post("http://tokenizer_container:5000/tokenize", "application/json", bytes.NewBuffer(requestBody))
+	resp, err := http.Post("://:5000/tokenize", "application/json", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return "", err
 	}
