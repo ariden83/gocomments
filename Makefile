@@ -22,6 +22,14 @@ generate-dataset:
 	python ./dataset/generate_func_comments_from_local_repo.py
 
 generate-model:
+	@if [ ! -d "runs" ]; then \
+		echo "Creating runs directory"; \
+		mkdir runs; \
+	fi
+	@if [ ! -d "runs/checkpoint" ]; then \
+		echo "Creating runs checkpoint directory"; \
+		mkdir runs/checkpoint; \
+	fi
 	$(DOCKER_COMPOSE) ./model/docker-compose.yml -p model $(DOCKER_DOWN)
 	$(DOCKER_COMPOSE) ./model/docker-compose.yml -p model $(DOCKER_BUILD) # --no-cache
 	$(DOCKER_COMPOSE) ./model/docker-compose.yml -p model $(DOCKER_UP) # --build
