@@ -17,6 +17,8 @@ run: build-app
 	./bin/gocomments .
 
 generate-dataset:
+	# pip install spacy
+	# python -m spacy download en_core_web_sm
 	python ./dataset/generate_func_comments_from_local_repo.py
 
 generate-model:
