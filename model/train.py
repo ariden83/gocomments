@@ -106,19 +106,28 @@ def download_local_dataset(cache_dir):
 def convert_examples_to_features(examples, tokenizer, args):
     # encode text-code pairs
     names = examples['name']
+    file_name = examples['file_name']
     comments = examples['comment']
-    # tests = [" ".join(test) for test in examples['test_list']] # convert list of test cases to single string
+    analyzed_comments = examples['comment_analysis']
+# tests = [" ".join(test) for test in examples['test_list']] # convert list of test cases to single string
 
     # encode names by prepending the task for input sequence
-    inputs = [args.prefix + text for text in names]
+    # inputs = [text for text in names]
+    inputs = [f"{file_name} {name}" for file_name, name in zip(file_name, names)]
     model_inputs = tokenizer(inputs, max_length=args.max_input_length, padding="max_length", truncation=True)
 
     # encode names by prepending the task for input sequence and appending the test sequence
-    # inputs = [args.prefix + text + " " + test for text, test in zip(names, tests)]
+    # inputs = [text + " " + test for text, test in zip(names, tests)]
     # model_inputs = tokenizer(inputs, max_length=args.max_input_length, padding="max_length", truncation=True)
 
+
+    # Combinaison des commentaires analysés avec les commentaires originaux pour la séquence cible
+    targets = [f"{comment} POS: {analyzed_comment['pos_tags']}"
+               for comment, analyzed_comment in zip(comments, analyzed_comments)]
+    labels = tokenizer(targets, max_length=args.max_target_length, padding="max_length", truncation=True).input_ids
+
     # encode names by prepending the task for input sequence
-    labels = tokenizer(comments, max_length=args.max_target_length, padding="max_length", truncation=True).input_ids
+    # labels = tokenizer(comments, max_length=args.max_target_length, padding="max_length", truncation=True).input_ids
 
     # we need to replace the index of the padding tokens by -100
     # such that they are not taken into account by the CrossEntropyLoss
@@ -529,7 +538,6 @@ class Args:
     validation_batch_size = 8
     max_input_length = 48
     max_target_length = 128
-    prefix = "Generate Python: "
 
     # OPTIMIZER
     learning_rate = 3e-4
@@ -562,7 +570,7 @@ def run_predict(args, text):
     tokenizer = RobertaTokenizer.from_pretrained(args.save_dir)
 
     # encode texts by prepending the task for input sequence and appending the test sequence
-    query = args.prefix + text
+    query = text
     encoded_text = tokenizer(query, return_tensors='tf', padding='max_length', truncation=True, max_length=args.max_input_length)
 
     # inference

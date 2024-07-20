@@ -24,6 +24,7 @@ TECH_TERMS = {
     "disconnect", "authenticate", "authorize"
 }
 
+
 def parse_go_file(file_path):
     """Parse a Go file to extract functions as JSON."""
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -45,6 +46,7 @@ def parse_go_file(file_path):
         print(f"Failed to parse JSON from output: '{result.stdout}'")
         return []
 
+
 def list_go_files(directory):
     """List Go files in a directory, excluding test and example files."""
     try:
@@ -62,6 +64,7 @@ def list_go_files(directory):
         print(f"Error: {e}")
         return []
 
+
 def analyze_comment(comment):
     """Analyze a comment for quality and return detailed analysis."""
     doc = nlp(comment)
@@ -73,6 +76,7 @@ def analyze_comment(comment):
         "quality_score": evaluate_quality(doc)
     }
     return analysis
+
 
 def evaluate_quality(doc):
     """Evaluate the quality of a comment based on various criteria."""
@@ -103,6 +107,7 @@ load_dotenv()
 # Récupérer le chemin du dépôt local à partir des variables d'environnement
 LOCAL_REPO_PATH = os.getenv('LOCAL_REPO_PATH')
 
+
 def main():
     print(f"Loading files from {LOCAL_REPO_PATH}")
     files = list_go_files(LOCAL_REPO_PATH)
@@ -122,12 +127,15 @@ def main():
                 for function in functions:
                     comment = function.get('comment', '')
                     analyzed_comment = analyze_comment(comment)
-                    quality_score = analyzed_comment['quality_score']
-                    if quality_score in {'good', 'average'}:
+
+                    quality_score = analyzed_comment.pop('quality_score', None)
+                    if quality_score in {'good'}:
                         function['comment_analysis'] = analyzed_comment
+                        function['file_name'] = os.path.splitext(os.path.basename(file_path))[0]
                         file.write(json.dumps(function) + '\n')
 
     print(f"Dataset saved to {dataset_path}")
+
 
 if __name__ == "__main__":
     main()
