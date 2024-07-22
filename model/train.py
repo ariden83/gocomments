@@ -5,6 +5,7 @@ import random
 import datetime
 from pathlib import Path
 import tensorflow as tf
+import glob
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"  # reduce the amount of console output from TF
 os.environ['CUDA_VISIBLE_DEVICES'] = "0"
@@ -86,22 +87,31 @@ def adjust_epochs(args, current_epoch):
 strategy = setup_strategy(xla=True, fp16=False, no_cuda=False)
 check_gpu_memory()
 
+
 def download_dataset(cache_dir):
     # download data using a keras utility
     _url = "https://raw.githubusercontent.com/google-research/google-research/master/mbpp/mbpp.jsonl" # download mbpp dataset
     dataset_path = tf.keras.utils.get_file("mbpp.jsonl", origin=_url, cache_dir=cache_dir, cache_subdir=cache_dir)
     return dataset_path
 
-def download_local_dataset(cache_dir):
-    # Remplacez l'appel pour télécharger depuis l'URL par l'utilisation locale du fichier
-    local_file_path = os.path.join("/app/scripts/dataset/functions_dataset_20240624_12.jsonl")
 
-    # Vérifiez si le fichier local existe
-    if os.path.exists(local_file_path):
-        print(f"Using local file: {local_file_path}")
-        return local_file_path
-    else:
-        raise FileNotFoundError(f"Local file {local_file_path} not found.")
+def download_local_dataset(cache_dir):
+    # Spécifiez le répertoire où les fichiers sont stockés
+    dataset_directory = "/app/scripts/dataset"
+
+    # Utilisez glob pour lister tous les fichiers .jsonl dans le répertoire
+    jsonl_files = glob.glob(os.path.join(dataset_directory, "*.jsonl"))
+
+    # Vérifiez s'il y a des fichiers .jsonl
+    if not jsonl_files:
+        raise FileNotFoundError(f"No .jsonl files found in directory {dataset_directory}.")
+
+    # Trouvez le fichier le plus récent basé sur le temps de modification
+    latest_file = max(jsonl_files, key=os.path.getmtime)
+
+    print(f"Using local file: {latest_file}")
+    return latest_file
+
 
 def convert_examples_to_features(examples, tokenizer, args):
     # encode text-code pairs
