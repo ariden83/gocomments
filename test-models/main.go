@@ -28,7 +28,7 @@ type Record struct {
 
 func main() {
 	p := Prompt{
-		currentModelVersion: 10,
+		currentModelVersion: 2,
 		datasetDirectory:    "/app/dataset/",
 		datasetPrefix:       "functions_dataset",
 		datasetExtension:    ".jsonl",
@@ -107,6 +107,7 @@ func (p *Prompt) predictFromDataset() error {
 		fmt.Println(record.Result)
 
 		j := 1
+		log.Printf("start iteration for %d : %d", j, p.currentModelVersion)
 		for j <= p.currentModelVersion {
 			start := time.Now()
 			commentPredicted, err := p.runPredict(record.Text, j)
@@ -144,7 +145,8 @@ func (p *Prompt) runPredict(text string, version int) (string, error) {
 
 	// Vérifier que le conteneur est en cours d'exécution
 	for {
-		resp, err := http.Get("://:5000/ping")
+		log.Printf("call ping handler")
+		resp, err := http.Get("http://test-api:5000/ping")
 		if err != nil {
 			time.Sleep(1 * time.Second)
 			continue
@@ -156,7 +158,7 @@ func (p *Prompt) runPredict(text string, version int) (string, error) {
 		time.Sleep(10 * time.Second)
 	}
 
-	resp, err := http.Post("://:5000/tokenize", "application/json", bytes.NewBuffer(requestBody))
+	resp, err := http.Post("http://test-api:5000/tokenize", "application/json", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return "", err
 	}
