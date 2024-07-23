@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
+	"sort"
 	"strings"
 	"time"
 )
@@ -27,8 +29,13 @@ type Record struct {
 }
 
 func main() {
+	latestVersion, err := getLastCheckpointVersion("/workspace/runs/checkpoint_model")
+	if err != nil {
+		log.Fatalf("fail to get last checkpoint version: %v", err)
+	}
+
 	p := Prompt{
-		currentModelVersion: 2,
+		currentModelVersion: latestVersion,
 		datasetDirectory:    "/app/dataset/",
 		datasetPrefix:       "functions_dataset",
 		datasetExtension:    ".jsonl",
@@ -107,7 +114,6 @@ func (p *Prompt) predictFromDataset() error {
 		fmt.Println(record.Result)
 
 		j := 1
-		log.Printf("start iteration for %d : %d", j, p.currentModelVersion)
 		for j <= p.currentModelVersion {
 			start := time.Now()
 			commentPredicted, err := p.runPredict(record.Text, j)
@@ -145,7 +151,6 @@ func (p *Prompt) runPredict(text string, version int) (string, error) {
 
 	// Vérifier que le conteneur est en cours d'exécution
 	for {
-		log.Printf("call ping handler")
 		resp, err := http.Get("http://test-api:5000/ping")
 		if err != nil {
 			time.Sleep(1 * time.Second)
@@ -183,4 +188,32 @@ func (p *Prompt) runPredict(text string, version int) (string, error) {
 	}
 
 	return tokenizeResponse.Comment, nil
+}
+
+func getLastCheckpointVersion(checkpointDir string) (int, error) {
+	files, err := ioutil.ReadDir(checkpointDir)
+	if err != nil {
+		return 0, err
+	}
+
+	var versions []int
+	re := regexp.MustCompile(`^checkpoint-tf-(\d+)$`)
+
+	for _, file := range files {
+		if file.IsDir() {
+			matches := re.FindStringSubmatch(file.Name())
+			if matches != nil {
+				var version int
+				fmt.Sscanf(matches[1], "%d", &version)
+				versions = append(versions, version)
+			}
+		}
+	}
+
+	if len(versions) == 0 {
+		return 0, fmt.Errorf("no checkpoint versions found in directory %s", checkpointDir)
+	}
+
+	sort.Ints(versions)
+	return versions[len(versions)-1], nil
 }

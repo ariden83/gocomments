@@ -24,5 +24,6 @@ services:
       - test-api
     volumes:
       - .:/app
+      - ../runs:/workspace/runs
       - ../dataset/file:/app/dataset
     command: ["sh", "-c", "go build -o /bin/myapp . && /bin/myapp"]
