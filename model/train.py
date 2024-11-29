@@ -119,7 +119,7 @@ def convert_examples_to_features(examples, tokenizer, args):
     file_name = examples['file_name']
     comments = examples['comment']
     analyzed_comments = examples['comment_analysis']
-# tests = [" ".join(test) for test in examples['test_list']] # convert list of test cases to single string
+    # tests = [" ".join(test) for test in examples['test_list']] # convert list of test cases to single string
 
     # encode names by prepending the task for input sequence
     # inputs = [text for text in names]
@@ -438,14 +438,17 @@ class Trainer:
                         logger.info(f"Saving checkpoint at {ckpt_save_path}")
 
                         try:
-                            model_save_dir = os.path.join(self.args.output_dir, self.args.checkpoint_model_dir, f"checkpoint-{epoch_iter + 1}")
+                            # Extract the checkpoint number from ckpt_save_path
+                            checkpoint_number = ckpt_save_path.split('-')[-1]
+
+                            model_save_dir = os.path.join(self.args.output_dir, self.args.checkpoint_model_dir, f"checkpoint-{checkpoint_number}")
                             os.makedirs(model_save_dir, exist_ok=True)
                             self.model.save_pretrained(model_save_dir)
 
                             tokenizer = RobertaTokenizer.from_pretrained(args.tokenizer_name)
                             tokenizer.save_pretrained(model_save_dir)
 
-                            model_save_dir = os.path.join(self.args.output_dir, self.args.checkpoint_model_dir, f"checkpoint-tf-{epoch_iter + 1}")
+                            model_save_dir = os.path.join(self.args.output_dir, self.args.checkpoint_model_dir, f"checkpoint-tf-{checkpoint_number}")
                             os.makedirs(model_save_dir, exist_ok=True)
                             self.model.save(model_save_dir, save_format='tf')
 
@@ -457,7 +460,6 @@ class Trainer:
                         break
 
                 # reset train loss after every epoch
-                # print(training_loss.numpy())
                 self.train_loss_dict[epoch_iter] = training_loss.numpy()
                 print(self.train_loss_dict[epoch_iter])
                 self.train_loss.reset_states()
@@ -636,5 +638,4 @@ fix_all_seeds(args.seed)
 
 if __name__ == "__main__":
     # run training and evaluation
-    dataset = run(args)
-
+     run(args)

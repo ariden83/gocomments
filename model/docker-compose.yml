@@ -10,7 +10,7 @@ services:
     #      devices:
     #        - capabilities: [gpu]
     volumes:
-      - ../runs:/workspace/runs
+      - /mnt/mydisk/models/gocomments:/workspace/runs
       - ../model:/app/scripts
       - ../dataset/file:/app/scripts/dataset
     environment:

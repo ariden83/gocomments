@@ -1048,7 +1048,7 @@ func HasPermission(user string) bool {
 }
 ```
 
-## ⚠️ Clause de non-responsabilité
+## ⚠️ Clause de non-responsabilité
 L’utilisation de OpenAI Go Assistant se fait à vos propres risques.
 
 - Je ne peux être tenu(e) responsable des erreurs générées par l’utilitaire, que ce soit des erreurs dans le code créé, des modifications incorrectes apportées à votre code existant, ou des pertes éventuelles de données.
