@@ -1048,6 +1048,16 @@ func HasPermission(user string) bool {
 }
 ```
 
+## ⚠️ Clause de non-responsabilité
+L’utilisation de OpenAI Go Assistant se fait à vos propres risques.
+
+- Je ne peux être tenu(e) responsable des erreurs générées par l’utilitaire, que ce soit des erreurs dans le code créé, des modifications incorrectes apportées à votre code existant, ou des pertes éventuelles de données.
+- Il est fortement recommandé de toujours vérifier le code généré ou modifié avant de l’utiliser dans un environnement de production.
+- Pensez également à sauvegarder votre code avant toute utilisation de cet outil afin d’éviter toute perte.
+
+Merci pour votre compréhension, et bonne exploration de l’outil ! 🚀
+
+
 ## In progress
 
 #### A) Generate comments using [Open AI](https://openai.com/index/introducing-chatgpt-and-whisper-apis/)
