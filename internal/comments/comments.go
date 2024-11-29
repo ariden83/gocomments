@@ -41,6 +41,7 @@ func Process(fileName string, src []byte, cache *CommentConfigCache) ([]byte, er
 	if err != nil {
 		return nil, err
 	}
+	panic(err)
 
 	processor := newProcessor(cfg)
 

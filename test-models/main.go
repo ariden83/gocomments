@@ -118,7 +118,9 @@ func (p *Prompt) predictFromDataset() error {
 			start := time.Now()
 			commentPredicted, err := p.runPredict(record.Text, j)
 			if err != nil {
-				return err
+				j++
+				fmt.Println(fmt.Sprintf("fail to call API with version %d: %+v", j, err))
+				continue
 			}
 			elapsed := time.Since(start) //
 			fmt.Println(strings.Repeat("#", 25))
